@@ -81,17 +81,17 @@ function computeNormalsToObj(indexObj, objPosition) {
                 nra = nrs[0];
                 nrb = nrs[1];
                 nrc = nrs[2];
-                norm = Math.sqrt(nrb.x * nrb.x + nrb.y * nrb.y + nrb.z * nrb.z);
+                norm = Math.sqrt((nra.x + nrb.x + nrc.x) * (nra.x + nrb.x + nrc.x) + (nra.y + nrb.y + nrc.y) * (nra.y + nrb.y + nrc.y) + (nra.z + nrb.z + nrc.z) * (nra.z + nrb.z + nrc.z));
 
                 newVertices = geoNormal.vertices;
 
-                v1x = (vfb.x + pos.x);
-                v1y = (vfb.y + pos.y);
-                v1z = (vfb.z + pos.z);
+                v1x = (vfc.x + vfa.x + vfb.x) / 3 + pos.x;
+                v1y = (vfc.y + vfa.y + vfb.y) / 3 + pos.y;
+                v1z = (vfc.z + vfa.z + vfb.z) / 3 + pos.z;
 
-                v2x = v1x + (nrb.x / norm);
-                v2y = v1y + (nrb.y / norm);
-                v2z = v1z + (nrb.z / norm);
+                v2x = v1x + (nra.x + nrb.x + nrc.x) / norm;
+                v2y = v1y + (nra.y + nrb.y + nrc.y) / norm;
+                v2z = v1z + (nra.z + nrb.z + nrc.z) / norm;
 
                 var point1 = new THREE.Vector3(v1x, v1y, v1z),
                     point2 = new THREE.Vector3(v2x, v2y, v2z);
