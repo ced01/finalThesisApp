@@ -4,12 +4,13 @@ var express = require('express'),
 
 var port = process.env.PORT || 8080;
 
+app.set('view engine', 'ejs');
 
 app.use("/public", express.static(__dirname + '/public'));
 
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/views/index.html');
+    res.render('index');
 });
 
 app.listen(port, function() {
