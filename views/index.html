@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link href="../public/css/application.css" type="text/css" rel="stylesheet">
+    <link href="../public/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="./public/css/pick-a-color-1.2.3.min.css">
+    <meta charset="UTF-8">
+    <title>CAD files 3D Mesh Viewer</title>
+</head>
+
+<body id="objOnFocus" data-index="0">
+    <div class="container-fluid">
+        <div class="row">
+            <div id="displayer">
+            </div>
+            <div class="menu">
+                <div class="col-md-9">
+                    <div class="navbar navbar-default " role="navigation">
+                        <div class="container">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <div class="navbar-brand">Web CAD File Viewer</div>
+                            </div>
+                            <div class="collapse navbar-collapse">
+                                <ul class="nav navbar-nav">
+                                    <li>
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Actions <b class="caret"></b></a>
+                                        <ul class="dropdown-menu well ulAction">
+                                            <li>
+                                                <div class="form-group formAddObj">
+                                                    <br>
+                                                    <div class="row">
+                                                        <div class="subaction col-md-12">
+                                                            Add axes to scene
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            Axes<span id="axes" class="glyphicon glyphicon-minus-sign pull-right" onclick='addOrRemoveAxes();'></span>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="subaction">
+                                                        Add a personal mesh
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <input id="meshSize" type="number" class="form-control" placeholder="3 (smallest size)">
+                                                    </div>
+                                                    <div>
+                                                        <label class="btn-file btn btn-primary btn-block"> Browse
+                                                            <input id="cadFileSelected" style="display: none;" type="file" multiple>
+                                                        </label>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class=" subaction col-md-12">
+                                                            Add basic meshes
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            Sphere<span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Sphere");'></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            Thorus <span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Thorus");'></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            Thorusknot<span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Thorusknot");'></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            Bottle<span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Bottle");'></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            Game<span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Game");'></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            Views <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li id="camera" class="ulmybtn">
+                                                Camera
+                                            </li>
+                                            <li id="light" class="ulmybtn">
+                                                Ambient light
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#" id="objButton" class="dropdown-toggle" data-toggle="dropdown">Meshes<b class="caret"></b></a>
+                                        <ul id="objectDiv" class="dropdown-menu form-group well">
+
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel-group">
+                    <div class="panel panel-info ">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <span class="infotitle">Camera</span>
+                                    <span id="currentCamPosX" class="pos"></span>
+                                    <span id="currentCamPosY" class="pos"></span>
+                                    <span id="currentCamPosZ" class="pos"></span>
+                                    <span id="fps"></span>
+                                </div>
+                                <div id="info2" class="col-md-12">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+        </div>
+        <div hidden id="displayControlMesh" data-functionality="settings" data-content='
+            <div class="container-fluid form-group">
+                <div class="row">
+                    <div class="col-md-8"> 
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Position</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input data-pos="meshX" type="number" class="positionMeshControl form-control" placeholder="0" value="0">
+                            </div>
+                            <div class="col-md-4">
+                                <input data-pos="meshY" type="number" class="positionMeshControl form-control" placeholder="0" value="0">
+                            </div>
+                            <div class="col-md-4">
+                                <input data-pos="meshZ" type="number" class="positionMeshControl form-control" placeholder="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                         <div class="row">
+                            <div class="col-md-12">
+                                <label>Color</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input id="bgcolor-button" class="pick-a-color hexColor form-control" value="ffffff">
+                            </div>
+                        </div>
+                    </div>
+                </div><br>
+            </div>
+            <!--<div class="col-md-3">
+                <label>Focus</label>
+            </div>
+            <div class="col-md-3">
+                <input id="focusOnObject" type="checkbox">
+            </div>-->
+                   '>
+        </div>
+        <div hidden id="displayControlCamera" data-functionality="Camera positions" data-content='
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label>Camera</label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <input id="cameraX" data-pos="camX" class="positionCamControl form-control" placeholder="X" value="21">
+                        </div>
+                        <div class="col-md-4">
+                            <input id="cameraY" data-pos="camY" class="positionCamControl form-control" placeholder="Y" value="12">
+                        </div>
+                        <div class="col-md-4">
+                            <input id="cameraZ" data-pos="camZ" class="positionCamControl form-control" placeholder="Z" value="22">
+                        </div>
+                    </div>
+                   '>
+        </div>
+        <div hidden id="displayControlLight" data-functionality="Ambient Light options" data-content='
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Color</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input id="bgcolor-button" class="pick-a-color hexLightColor form-control" value="ffffff">
+                            </div>
+                        </div>
+                    </div>
+                   '>
+        </div>
+        <div id="mainModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalContent">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <div id="btnValidation" class="btn btn-success">Apply</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+<script src="./public/js/jquery/jquery-2.1.4.min.js"></script>
+<script async src="./public/js/jquery-mousewheel-master/jquery.mousewheel.min.js"></script>
+<script src="./public/bootstrap/js/bootstrap.min.js"></script>
+<script src="./public/js/threeJS/build/three.js"></script>
+<script src="./public/js/threeJS/examples/js/loaders/OBJLoader.js"></script>
+<script src="./public/js/threeJS/examples/js/loaders/OBJLoader2.js"></script>
+<script src="./public/js/global.js"></script>
+<script async src="./public/js/tinycolor-0.9.15.min.js"></script>
+<script async src="./public/js/pick-a-color-1.2.3.min.js"></script>
+<script src="./public/js/solvers.js"></script>
+<script async src="./public/js/application.js"></script>
+<script async src="./public/js/event.js"></script>
+<script async src="./public/js/object.js"></script>
+<script async src="./public/js/modalContolFunctions.js"></script>
+<script async src="./public/js/FileSaver.min.js"></script>
+
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "thesis",
+  "version": "1.0.0",
+  "description": "CAD web mesh viewer",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ced01/thesis.git"
+  },
+  "keywords": [
+    "thesis",
+    "mesh",
+    "viewer",
+    "cad"
+  ],
+  "author": "Cedric Lautard",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ced01/thesis/issues"
+  },
+  "homepage": "https://github.com/ced01/thesis#readme"
+}
