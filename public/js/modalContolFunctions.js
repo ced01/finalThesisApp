@@ -149,6 +149,17 @@ function openModalMeshControl(objFoc) {
         modalContent.html(content);
         modal.modal('show');
 
+        var positions = $(".positionMeshControl"),
+            actualPositions = new Array();
+
+        actualPositions[0] = obj.position.x;
+        actualPositions[1] = obj.position.y;
+        actualPositions[2] = obj.position.z;
+        console.log(positions);
+        for (var i = 0; i < positions.length; i++) {
+            positions[i].value = actualPositions[i];
+        }
+
         $("#meshName").html(globalThreeOBJs.arrObjName[objFoc]);
         $(".pick-a-color").pickAColor();
         $(".pick-a-color").val(hexaRgb[0]);

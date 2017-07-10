@@ -13,51 +13,29 @@ $(document).ready(function() {
     globalCam.camPosZ = $("#currentCamPosZ");
 
     var newSelectedmesh = null;
+
     $("#meshSize").on('change', function() {
         globalThreeOBJs.meshSize = $(this).val();
     });
 
     fileInput.addEventListener('change', function() {
         if (globalThreeOBJs.meshSize >= 3) {
+
             var reader = new FileReader(),
                 fileName = $(this).val().split("\\")[2].split(".")[0];
-
+            showLoading();
             reader.addEventListener('load', function() {
+                if ($("#screenLoad").is(":visible")) {
+                    personalLoad(reader, fileName);
+                }
+                hideLoading();
 
-                var content = reader.result,
-                    instance = new Module.FinalSurface(content, ~~globalThreeOBJs.meshSize);
-                instance.computeData();
-
-                var fileString = instance.vertices_output + instance.normals_output + instance.faces_output,
-                    loader = new THREE.OBJLoader2(),
-                    myObj = loader.parseText(fileString);
-
-                addNameToArray(fileName);
-                myObj.traverse(function(child) {
-                    if (child instanceof THREE.Mesh) {
-                        //child.material.map = texture;
-                        child.material = globalThreeOBJs.objMaterials;
-                        if (globalThreeOBJs.arrObjName[globalThreeOBJs.arrObjName.length - 1] == "Scene") {
-                            child.material = new THREE.MeshBasicMaterial({ color: 0x6666ff, wireframe: false });
-                            initialObjColors = "6666ff_rgb(102, 102, 255)";
-                        }
-                    }
-                });
-                myObj.needsUpdate = true;
-                globalThreeOBJs.arrNameAlreadyUsed.push(0);
-                globalThreeOBJs.arrNormalBool.push(false);
-                globalThreeOBJs.hexacolors.push("ffffff_rgb(255, 255, 255)");
-                globalThreeOBJs.wireframes.push(false);
-                globalThreeOBJs.shades.push(false);
-                addIntoObjArr(myObj);
-                addtoScene(myObj);
-                computeNormalsToObj(globalThreeOBJs.meshes.length - 1, myObj.position);
-
-                instance.delete();
             });
+
             reader.readAsText(fileInput.files[0]);
         }
     });
+
 
     var script = document.createElement('script');
 

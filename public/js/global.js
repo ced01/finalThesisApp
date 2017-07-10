@@ -20,20 +20,21 @@ var globalCam = {
 var globalThreeOBJs = {
 
     meshes: new Array(),
-    meshSize: 3,
-    hexacolors: new Array(),
-    wireframes: new Array(),
-    shades: new Array(),
-    objOnFocus: 0,
     arrObjName: new Array(),
     arrNameAlreadyUsed: new Array(),
     arrObjNormals: new Array(),
     arrNormalBool: new Array(),
+    hexacolors: new Array(),
+    wireframes: new Array(),
+    shades: new Array(),
+    gaussianCurvature: new Array(),
     objMaterials: new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false }),
-    objloader: new THREE.OBJLoader(),
+    objloader: new THREE.OBJLoader2(),
     initialObjPos: [0, 0, 0],
     helperFunctions: [onProgress, onError],
-    domUlObjLenght: 120
+    domUlObjLenght: 120,
+    meshSize: 3,
+    objOnFocus: 0
 };
 
 var globalMouse = {
@@ -41,7 +42,7 @@ var globalMouse = {
     windowHalfY: window.innerHeight / 2,
     mouseX: 0,
     mouseY: 0,
-    seepMouseWheel: 0.00001
+    seepMouseWheel: 0.0001
 };
 
 function onProgress(xhr) {
