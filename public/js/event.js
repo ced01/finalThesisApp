@@ -76,29 +76,34 @@ function onMeshHover() {
     }
 }
 
+function showLoading() {
+    $("#screenLoad").attr('hidden', false);
+}
+
+function hideLoading() {
+    $("#screenLoad").attr('hidden', true);
+}
+
 function personalLoad(reader, fileName) {
 
 
     var content = reader.result,
         instance = new Module.FinalSurface(content, ~~globalThreeOBJs.meshSize);
 
+
     instance.computeData();
 
     var fileString = instance.vertices_output + instance.normals_output + instance.faces_output,
-        gaussianColors = instance.colors_output,
+        gaussianColors = instance.G_colors_output,
         loader = new THREE.OBJLoader2(),
         myObj = loader.parseText(fileString);
-
-
-
 
     addNameToArray(fileName);
     myObj.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
-            child.material = globalThreeOBJs.objMaterials;
+            child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, wireframe: false, vertexColors: THREE.NoColors });
         }
     });
-    myObj.needsUpdate = true;
     globalThreeOBJs.arrNameAlreadyUsed.push(0);
     globalThreeOBJs.arrNormalBool.push(false);
     globalThreeOBJs.hexacolors.push("ffffff_rgb(255, 255, 255)");
@@ -107,16 +112,7 @@ function personalLoad(reader, fileName) {
     addIntoObjArr(myObj);
     addtoScene(myObj);
     computeNormalsToObj(globalThreeOBJs.meshes.length - 1, myObj.position);
-    globalThreeOBJs.gaussianCurvature.push([globalThreeOBJs.meshes.length - 1, gaussianColors]);
-    console.log(globalThreeOBJs.gaussianCurvature);
+    globalThreeOBJs.gaussianCurvature.push([globalThreeOBJs.meshes.length - 1, gaussianColors, false]);
     instance.delete();
 
-}
-
-function showLoading() {
-    $("#screenLoad").attr('hidden', false);
-}
-
-function hideLoading() {
-    $("#screenLoad").attr('hidden', true);
 }

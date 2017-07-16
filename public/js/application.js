@@ -20,19 +20,18 @@ $(document).ready(function() {
 
     fileInput.addEventListener('change', function() {
         if (globalThreeOBJs.meshSize >= 3) {
-
-            var reader = new FileReader(),
-                fileName = $(this).val().split("\\")[2].split(".")[0];
             showLoading();
-            reader.addEventListener('load', function() {
-                if ($("#screenLoad").is(":visible")) {
+            if ($("#screenLoad").is(":visible")) {
+                var reader = new FileReader(),
+                    fileName = $(this).val().split("\\")[2].split(".")[0];
+                reader.addEventListener('load', function() {
+
                     personalLoad(reader, fileName);
-                }
-                hideLoading();
 
-            });
-
-            reader.readAsText(fileInput.files[0]);
+                    hideLoading();
+                }, false);
+                reader.readAsText(fileInput.files[0]);
+            }
         }
     });
 
@@ -142,7 +141,7 @@ function animate() {
 
 function init(container) {
 
-    globalCam.camera = new THREE.PerspectiveCamera(45, (container.width() / container.height()), 1, 400);
+
     moveCamera(globalCam.initialCamPos[0], globalCam.initialCamPos[1], globalCam.initialCamPos[2]);
     objectLoader("Scene", false);
     openModalCamControl(globalCam.camera);
@@ -150,13 +149,10 @@ function init(container) {
     createAxe(new THREE.Vector3(-30, 0, 0), new THREE.Vector3(30, 0, 0), new THREE.MeshBasicMaterial({ color: 0xff1fff }));
     createAxe(new THREE.Vector3(0, -30, 0), new THREE.Vector3(0, 30, 0), new THREE.MeshBasicMaterial({ color: 0x29ff29 }));
     createAxe(new THREE.Vector3(0, 0, -30), new THREE.Vector3(0, 0, 30), new THREE.MeshBasicMaterial({ color: 0xff8b3d }));
-    //globalThree.scene.fog = new THREE.Fog(0x000000, 0.015, 200);
     globalThree.scene.add(globalThree.ambient);
     globalThree.scene.add(globalThree.directionalLight);
     globalThree.directionalLight.position.set(0, 1, 1);
-    globalThree.renderer = new THREE.WebGLRenderer();
     globalThree.renderer.setPixelRatio(window.devicePixelRatio);
     globalThree.renderer.setSize(container.width(), container.height());
-    //globalThree.renderer.shadowMap.enabled = true;
     container.append(globalThree.renderer.domElement);
 }

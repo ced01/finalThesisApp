@@ -1,6 +1,6 @@
 var globalThree = {
 
-    renderer: null,
+    renderer: new THREE.WebGLRenderer(),
     scene: new THREE.Scene(),
     ambient: new THREE.AmbientLight(0xffeedd),
     directionalLight: new THREE.DirectionalLight(0xffeedd),
@@ -9,7 +9,7 @@ var globalThree = {
 
 };
 var globalCam = {
-    camera: new THREE.PerspectiveCamera(45, (window.innerWidth / window.innerHeight), 1, 6000),
+    camera: new THREE.PerspectiveCamera(50, 1, 0.1, 10000),
     initialCamPos: [21, 12, 22],
     freeCam: false,
     camPosX: null,
@@ -28,7 +28,6 @@ var globalThreeOBJs = {
     wireframes: new Array(),
     shades: new Array(),
     gaussianCurvature: new Array(),
-    objMaterials: new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false }),
     objloader: new THREE.OBJLoader2(),
     initialObjPos: [0, 0, 0],
     helperFunctions: [onProgress, onError],
