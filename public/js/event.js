@@ -26,7 +26,7 @@ function onMousewheel() {
         posObj = obj.position;
         cam = globalCam.camera;
         posCam = cam.position;
-        speed = globalMouse.seepMouseWheel;
+        speed = globalMouse.speedMouseWheel;
         vx = posCam.x - posObj.x;
         vy = posCam.y - posObj.y;
         vz = posCam.z - posObj.z;
@@ -90,8 +90,9 @@ function personalLoad(reader, fileName) {
     var content = reader.result,
         instance = new Module.FinalSurface(content, ~~globalThreeOBJs.meshSize);
 
-
+    // showLoading();
     instance.computeData();
+    // hideLoading()
 
     var fileString = instance.vertices_output + instance.normals_output + instance.faces_output,
         gaussianColors = instance.G_colors_output,

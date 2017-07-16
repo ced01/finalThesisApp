@@ -438,8 +438,7 @@ function objectLoader(name) {
             globalThreeOBJs.objloader.load(path, function(obj) {
                 obj.traverse(function(child) {
                     if (child instanceof THREE.Mesh) {
-                        //child.material.map = texture;
-                        child.material = globalThreeOBJs.objMaterials;
+                        child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, wireframe: false, vertexColors: THREE.NoColors });
                         if (globalThreeOBJs.arrObjName[globalThreeOBJs.arrObjName.length - 1] == "Scene") {
                             child.material = new THREE.MeshBasicMaterial({ color: 0x6666ff, side: THREE.DoubleSide, wireframe: false, vertexColors: THREE.NoColors });
                             initialObjColors = "6666ff_rgb(102, 102, 255)";

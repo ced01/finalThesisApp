@@ -41,7 +41,7 @@ var globalMouse = {
     windowHalfY: window.innerHeight / 2,
     mouseX: 0,
     mouseY: 0,
-    seepMouseWheel: 0.0001
+    speedMouseWheel: 0.0001
 };
 
 function onProgress(xhr) {
