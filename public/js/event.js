@@ -90,9 +90,9 @@ function personalLoad(reader, fileName) {
     var content = reader.result,
         instance = new Module.FinalSurface(content, ~~globalThreeOBJs.meshSize);
 
-    // showLoading();
+    console.log("Start compute");
     instance.computeData();
-    // hideLoading()
+    console.log("End compute");
 
     var fileString = instance.vertices_output + instance.normals_output + instance.faces_output,
         gaussianColors = instance.G_colors_output,
