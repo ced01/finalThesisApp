@@ -19,19 +19,21 @@ $(document).ready(function() {
     });
 
     fileInput.addEventListener('change', function() {
+        $("#messageDiv").html("File to load -<b>" + $(this).val().split("\\")[2].split(".")[0] + "</b>");
         if (globalThreeOBJs.meshSize >= 3) {
             showLoading();
             if ($("#screenLoad").is(":visible")) {
                 var reader = new FileReader(),
                     fileName = $(this).val().split("\\")[2].split(".")[0];
+
                 reader.addEventListener('load', function() {
-
                     personalLoad(reader, fileName);
-
                     hideLoading();
                 }, false);
                 reader.readAsText(fileInput.files[0]);
             }
+        } else {
+            $("#messageDiv").html("<b>" + $(this).val().split("\\")[2].split(".")[0] + "</b> - minimum mesh size is <b>3</b>");
         }
     });
 

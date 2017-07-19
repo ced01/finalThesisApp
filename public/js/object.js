@@ -115,11 +115,9 @@ function addNormalToObj(indexObj) {
 
     var normals = globalThreeOBJs.arrObjNormals[indexObj],
         scene = globalThree.scene;
-    //showLoading();
     normals.forEach(function(normal) {
         scene.add(normal);
     });
-    //hideLoading();
 }
 
 function removeNormalFromObj(indexObj) {
@@ -170,6 +168,7 @@ function addShade(indexObj, modifiedFromWf) {
             faces = geo.faces;
             faces.forEach(function(f) {
                 f.color.setRGB(Math.abs(f.normal.x), Math.abs(f.normal.y), Math.abs(f.normal.z));
+                f.needsUpdate = true;
             });
             child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
             child.material = new THREE.MeshBasicMaterial({ wireframe: globalThreeOBJs.wireframes[indexObj], side: THREE.DoubleSide, vertexColors: THREE.FaceColors, shading: THREE.FlatShading });
@@ -311,6 +310,7 @@ function addGaussianColor(indexObj) {
                                 }
                             }
                             faces[f].color.setRGB(redColor, greenColor, blueColor);
+                            faces[f].needsUpdate = true;
                         }
                     }
                     nbface += 2;
@@ -387,7 +387,6 @@ function setObjectColor(hexCol, rgbColor) {
 
 }
 
-
 function manageWireframe(indexObj, wf) {
     var hexaColor = "#" + globalThreeOBJs.hexacolors[indexObj].split("_")[0],
         objMat = new THREE.MeshBasicMaterial({ color: hexaColor, side: THREE.DoubleSide, wireframe: wf }),
@@ -445,7 +444,6 @@ function objectLoader(name) {
                         }
                     }
                 });
-
                 obj.castShadow = true;
                 obj.receiveShadow = true;
                 obj.needsUpdate = true;

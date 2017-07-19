@@ -115,5 +115,6 @@ function personalLoad(reader, fileName) {
     computeNormalsToObj(globalThreeOBJs.meshes.length - 1, myObj.position);
     globalThreeOBJs.gaussianCurvature.push([globalThreeOBJs.meshes.length - 1, gaussianColors, false]);
     instance.delete();
+    $("#messageDiv").html("Last file loaded - <b>" + fileName + "</b>");
 
 }
