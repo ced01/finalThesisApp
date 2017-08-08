@@ -157,7 +157,8 @@ function addShade(indexObj, modifiedFromWf) {
         geo = null,
         faces = null;
 
-    if (getGaussian()[2]) {
+    if (getGaussian(indexObj)[2]) {
+        console.log("bof");
         setBoolGaussian(indexObj, false);
         removeGaussianColor(indexObj);
     }
@@ -167,11 +168,12 @@ function addShade(indexObj, modifiedFromWf) {
             geo = new THREE.Geometry().fromBufferGeometry(child.geometry);
             faces = geo.faces;
             faces.forEach(function(f) {
-                f.color.setRGB(Math.abs(f.normal.x), Math.abs(f.normal.y), Math.abs(f.normal.z));
                 f.needsUpdate = true;
+                f.color.setRGB(Math.abs(f.normal.x), Math.abs(f.normal.y), Math.abs(f.normal.z));
+
             });
             child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
-            child.material = new THREE.MeshBasicMaterial({ wireframe: globalThreeOBJs.wireframes[indexObj], side: THREE.DoubleSide, vertexColors: THREE.FaceColors, shading: THREE.FlatShading });
+            child.material = new THREE.MeshBasicMaterial({ wireframe: globalThreeOBJs.wireframes[indexObj], side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
         }
     });
     if (!modifiedFromWf) {
@@ -189,7 +191,7 @@ function removeShade(indexObj, modifiedFromCol) {
         shades = globalThreeOBJs.shades,
         obj = globalThreeOBJs.meshes[indexObj],
         objColor = "#" + globalThreeOBJs.hexacolors[indexObj].split("_")[0],
-        objMaterial = new THREE.MeshBasicMaterial({ color: objColor, wireframe: wf, vertexColors: THREE.NoColors });
+        objMaterial = new THREE.MeshBasicMaterial({ color: objColor, wireframe: wf, side: THREE.DoubleSide });
 
     domElement.attr("src", "./public/css/icon/add_Shadding.png");
     obj.traverse(function(child) {
@@ -255,66 +257,27 @@ function addGaussianColor(indexObj) {
             if (child instanceof THREE.Mesh) {
                 geo = new THREE.Geometry().fromBufferGeometry(child.geometry);
                 faces = geo.faces;
-
                 var faceColors = stringColors.split("\n"),
-                    nbface = 0,
-                    redColor = 0,
-                    greenColor = 0,
-                    blueColor = 0,
-                    col = new Array(),
-                    nextCol = new Array(),
-                    dr = 0,
-                    dg = 0,
-                    db = 0;
+                    nbface = 0;
 
-                for (var c = 0; c < faceColors.length - 1; c++) {
-                    var col = faceColors[c].split("  "),
-                        nextCol = faceColors[c + 1].split("  "),
-                        dr = (col[0] - nextCol[0]) / 2,
-                        dg = (col[1] - nextCol[1]) / 2,
-                        db = (col[2] - nextCol[2]) / 2;
-                    redColor = col[0];
-                    greenColor = col[1];
-                    blueColor = col[2];
+                var c, f = 0;
 
-                    for (var f = nbface; f < nbface + 2; f++) {
+                for (c = 0; c < faceColors.length; c++) {
 
-                        if (faceColors[c] != "" && faces[f] != undefined) {
-                            if (f % 2 == 1) {
-                                if (dr > 0) {
-                                    if (col[0] + dr <= 1) {
-                                        redColor = col[0] + dr;
-                                    }
-                                } else {
-                                    if (col[0] - dr <= 1) {
-                                        redColor = col[0] - dr;
-                                    }
-                                }
-                                if (dg > 0) {
-                                    if (col[1] + dg <= 1) {
-                                        greenColor = col[1] + dg;
-                                    }
-                                } else {
-                                    if (col[1] - dg <= 1) {
-                                        greenColor = col[1] - dg;
-                                    }
-                                }
-                                if (db > 0) {
-                                    if (col[2] + db <= 1) {
-                                        blueColor = col[2] + db;
-                                    }
-                                } else {
-                                    if (col[2] - db <= 1) {
-                                        blueColor = col[2] - db;
-                                    }
-                                }
+                    if (faceColors[c] != "") {
+                        var col = faceColors[c].split("  ");
+
+                        for (f = nbface; f < nbface + 2; f++) {
+                            if (faceColors[c] != "" && faces[f] != undefined) {
+                                faces[f].color.setRGB(col[0], col[1], col[2]);
+                                faces[f].needsUpdate = true;
                             }
-                            faces[f].color.setRGB(redColor, greenColor, blueColor);
-                            faces[f].needsUpdate = true;
                         }
+                        nbface += 2;
                     }
-                    nbface += 2;
+
                 }
+
                 child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
                 child.material = new THREE.MeshBasicMaterial({ wireframe: globalThreeOBJs.wireframes[indexObj], side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
             }
@@ -330,7 +293,7 @@ function removeGaussianColor(indexObj) {
         shades = globalThreeOBJs.shades,
         obj = globalThreeOBJs.meshes[indexObj],
         objColor = "#" + globalThreeOBJs.hexacolors[indexObj].split("_")[0],
-        objMaterial = new THREE.MeshBasicMaterial({ color: objColor, side: THREE.DoubleSide, wireframe: globalThreeOBJs.wireframes[indexObj], vertexColors: THREE.NoColors }),
+        objMaterial = new THREE.MeshBasicMaterial({ color: objColor, side: THREE.DoubleSide, wireframe: globalThreeOBJs.wireframes[indexObj] }),
         geo = null,
         faces = null;
 
@@ -417,7 +380,6 @@ function addOrRemoveWireframe(indexObj) {
     if (objShade) {
         addShade(indexObj, true);
     }
-    console.log(objGaussian);
     if (objGaussian) {
         addGaussianColor(indexObj);
     }

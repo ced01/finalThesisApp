@@ -99,6 +99,8 @@ function personalLoad(reader, fileName) {
         loader = new THREE.OBJLoader2(),
         myObj = loader.parseText(fileString);
 
+
+
     addNameToArray(fileName);
     myObj.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
