@@ -5,7 +5,6 @@ $(document).ready(function() {
 
     container.css("width", $(window).width());
     container.css("height", $(window).height());
-
     globalCam.camera.aspect = container.width() / container.height();
     globalCam.camera.updateProjectionMatrix();
     globalCam.camPosX = $("#currentCamPosX");
@@ -17,7 +16,6 @@ $(document).ready(function() {
     $("#meshSize").on('change', function() {
         globalThreeOBJs.meshSize = $(this).val();
     });
-
     fileInput.addEventListener('change', function() {
         $("#messageDiv").html("File to load -<b>" + $(this).val().split("\\")[2].split(".")[0] + "</b>");
         if (globalThreeOBJs.meshSize >= 3) {
@@ -25,7 +23,6 @@ $(document).ready(function() {
             if ($("#screenLoad").is(":visible")) {
                 var reader = new FileReader(),
                     fileName = $(this).val().split("\\")[2].split(".")[0];
-
                 reader.addEventListener('load', function() {
                     personalLoad(reader, fileName);
                     hideLoading();
@@ -63,23 +60,14 @@ $(document).ready(function() {
     document.head.appendChild(script);
 
     $(window).on("load", function() {
-        globalThreeOBJs.arrObjName = [];
-        globalThreeOBJs.meshes = [];
         init(container);
         animate();
-        container.mouseup(function() {
-            globalCam.freeCam = false;
-        });
-        container.mousedown(function() {
-            globalCam.freeCam = true;
-        });
     });
 
     $(window).on("resize", function() {
         container.css("width", $(window).width());
         container.css("height", $(window).height());
         globalCam.camera.aspect = container.width() / container.height();
-        globalCam.camera.updateProjectionMatrix();
         globalThree.renderer.setSize(container.width(), container.height());
 
     });
@@ -91,63 +79,28 @@ $(document).ready(function() {
             domElement.css("overflow-y", "scroll");
         }
     });
-
-    container.on("mousemove", function(event) {
-        globalMouse.mouseX = (event.clientX - globalMouse.windowHalfX) / 2;
-        globalMouse.mouseY = (event.clientY - globalMouse.windowHalfY) / 2;
-    });
-
-
-    document.addEventListener('mousemove', onDocumentMouseMove, false);
     window.addEventListener('resize', onWindowResize, false);
-
 });
 
 function render() {
 
-    var rend = globalThree.renderer,
-        sce = globalThree.scene,
-        objFocused = globalThreeOBJs.objOnFocus,
-        gCam = globalCam,
-        cam = gCam.camera,
-        camPosition = cam.position,
-        domCamX = gCam.camPosX,
-        domCamY = gCam.camPosY,
-        domCamZ = gCam.camPosZ;
+    globalCam.camPosX.html(~~globalCam.camera.position.x);
+    globalCam.camPosY.html(~~globalCam.camera.position.y);
+    globalCam.camPosZ.html(~~globalCam.camera.position.z);
 
-    if (globalCam.freeCam) {
-        onMeshHover();
-    } else {
-        onMousewheel();
-    }
-    if (domCamX != null && domCamY != null && domCamZ != null) {
-        domCamX.html(~~camPosition.x);
-        domCamY.html(~~camPosition.y);
-        domCamZ.html(~~camPosition.z);
-    }
-    if (objFocused == 0 || objFocused == undefined) {
-
-        cam.lookAt(sce.position);
-    } else {
-        setFocusOnObject(objFocused);
-    }
-    rend.render(sce, cam);
+    globalThree.renderer.render(globalThree.scene, globalCam.camera);
 }
 
-
 function animate() {
-
     requestAnimationFrame(animate);
+    globalCam.orbitControls.update();
     render();
 }
 
 function init(container) {
 
-
     moveCamera(globalCam.initialCamPos[0], globalCam.initialCamPos[1], globalCam.initialCamPos[2]);
-    objectLoader("Scene", false);
     openModalCamControl(globalCam.camera);
-    openModalLightControl();
     createAxe(new THREE.Vector3(-30, 0, 0), new THREE.Vector3(30, 0, 0), new THREE.MeshBasicMaterial({ color: 0xff1fff }));
     createAxe(new THREE.Vector3(0, -30, 0), new THREE.Vector3(0, 30, 0), new THREE.MeshBasicMaterial({ color: 0x29ff29 }));
     createAxe(new THREE.Vector3(0, 0, -30), new THREE.Vector3(0, 0, 30), new THREE.MeshBasicMaterial({ color: 0xff8b3d }));
@@ -157,4 +110,11 @@ function init(container) {
     globalThree.renderer.setPixelRatio(window.devicePixelRatio);
     globalThree.renderer.setSize(container.width(), container.height());
     container.append(globalThree.renderer.domElement);
+    objectLoader("Scene", false);
+    globalCam.orbitControls = new THREE.OrbitControls(globalCam.camera, globalThree.renderer.domElement);
+    globalCam.orbitControls.addEventListener('change', render);
+    /*globalThree.dragControls = new THREE.DragControls(globalThreeOBJs.meshes, globalCam.camera, globalThree.renderer.domElement);
+    globalThree.dragControls.addEventListener('dragstart', function(event) { controls.enabled = false; });
+    globalThree.dragControls.addEventListener('dragend', function(event) { controls.enabled = true; });*/
+
 }

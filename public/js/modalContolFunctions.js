@@ -38,19 +38,19 @@ function getFormMeshPositions() {
 function onPositionMeshFormfill(currMeshPositions) {
 
     var positionMeshControl = $(".positionMeshControl"),
-        obj = globalThreeOBJs.meshes[globalThreeOBJs.objOnFocus];
+        mesh = globalThreeOBJs.meshes[globalThreeOBJs.objOnFocus];
 
     positionMeshControl.each(function() {
 
         if ($(this).data("pos") == "meshX") {
 
-            obj.position.x = currMeshPositions[0];
+            mesh.pos.x = currMeshPositions[0];
         }
         if ($(this).data("pos") == "meshY") {
-            obj.position.y = currMeshPositions[1];
+            mesh.pos.y = currMeshPositions[1];
         }
         if ($(this).data("pos") == "meshZ") {
-            obj.position.z = currMeshPositions[2];
+            mesh.pos.z = currMeshPositions[2];
         }
 
     });
@@ -68,17 +68,15 @@ function openModalCamControl(camera) {
 
         var displayArea = $("#displayControlCamera"),
             title = displayArea.data("functionality"),
-            modal = $("#mainModal"),
-            modalContent = $("#modalContent"),
+            modal = $("#camModal"),
+            modalContent = $("#cammodalContent"),
             content = displayArea.data("content"),
-            btn = $("#btnValidation"),
+            btn = $("#cambtnValidation"),
             modalTitle = $(".modal-title");
-
 
         modalTitle.html(title);
         modalContent.html(content);
         modal.modal('show');
-
 
         btn.on("click", function() {
             var newCamPositions = getFormCamPositions();
@@ -93,103 +91,60 @@ function openModalCamControl(camera) {
     });
 }
 
-function openModalLightControl() {
-
-    $("#light").on("click", function() {
-        alert("bof");
-        var displayArea = $("#displayControlLight"),
-            title = displayArea.data("functionality"),
-            modal = $("#mainModal"),
-            modalContent = $("#modalContent"),
-            content = displayArea.data("content"),
-            btn = $("#btnValidation"),
-            modalTitle = $(".modal-title");
-
-
-        modalTitle.html(title);
-        modalContent.html(content);
-        modal.modal('show');
-
-        $(".pick-a-color").pickAColor();
-
-        btn.on("click", function() {
-
-        });
-    });
-}
-
 function setFocusOnObject(objFocused) {
-
-
-    var objPosition = globalThreeOBJs.meshes[objFocused];
-    globalCam.camera.lookAt(objPosition.position);
-
+    globalCam.camera.lookAt(globalThreeOBJs.meshes[objFocused].pos);
 }
 
 function openModalMeshControl(objFoc) {
 
-    if (globalThreeOBJs.arrObjName[objFoc] != null) {
-
-        var obj = globalThreeOBJs.meshes[objFoc],
+    var object3d = globalThreeOBJs.meshes[objFoc];
+    if (!object3d.hidden) {
+        var mesh = object3d.obj,
             displayArea = $("#displayControlMesh"),
             title = displayArea.data("functionality"),
-            modal = $("#mainModal"),
+            modal = $("#meshModal"),
             modalContent = $("#modalContent"),
             content = displayArea.data("content"),
             btn = $("#btnValidation"),
             modalTitle = $(".modal-title"),
-            hexaRgb = globalThreeOBJs.hexacolors[objFoc].split("_"),
+            hexaRgb = object3d.color.split("_"),
             newHexCol = null,
             newRgbCol = null,
             newobjPosition = null;
 
         globalThreeOBJs.objOnFocus = objFoc;
-        modalContent.html("");
-        modalTitle.html(" <b> " + globalThreeOBJs.arrObjName[objFoc] + " </b> " + title);
+        modalTitle.html(" <b> " + object3d.name + " </b> " + title);
         modalContent.html(content);
         modal.modal('show');
 
-        var positions = $(".positionMeshControl"),
-            actualPositions = new Array();
+        var positions = $(".positionMeshControl");
 
-        actualPositions[0] = obj.position.x;
-        actualPositions[1] = obj.position.y;
-        actualPositions[2] = obj.position.z;
-        console.log(positions);
-        for (var i = 0; i < positions.length; i++) {
-            positions[i].value = actualPositions[i];
-        }
+        positions[0].value = object3d.pos.x;
+        positions[1].value = object3d.pos.y;
+        positions[2].value = object3d.pos.z;
 
-        $("#meshName").html(globalThreeOBJs.arrObjName[objFoc]);
+        $("#meshName").html(object3d.name);
         $(".pick-a-color").pickAColor();
         $(".pick-a-color").val(hexaRgb[0]);
         $(".current-color").css("background-color", hexaRgb[1]);
-
 
         $("#btnValidation").on("click", function() {
             newHexCol = $(".hexColor").val();
             rgbColor = $(".current-color").css("background-color");
             newobjPosition = getFormMeshPositions();
-            if (newobjPosition[0] != obj.position.x || newobjPosition[1] != obj.position.y || newobjPosition[2] != obj.position.z) {
-                if (globalThreeOBJs.arrNormalBool[objFoc]) {
-                    removeNormalFromObj(objFoc);
-                }
-                if (globalThreeOBJs.arrNormalBool[objFoc]) {
-                    addNormalToObj(objFoc);
-                }
-                if (globalThreeOBJs.shades[objFoc]) {
+            if (newobjPosition[0] != object3d.pos.x || newobjPosition[1] != object3d.pos.y || newobjPosition[2] != object3d.pos.z) {
+                if (object3d.sh) {
                     addShade(objFoc, true);
                 }
             }
             onPositionMeshFormfill(newobjPosition);
-
             moveNormals(objFoc);
-
             $("#currentMeshPosX").html(newobjPosition[0]);
             $("#currentMeshPosY").html(newobjPosition[1]);
             $("#currentMeshPosZ").html(newobjPosition[2]);
-
-            setObjectColor(newHexCol, rgbColor);
+            if (!object3d.sh || !object3d.gc) {
+                setObjectColor(newHexCol, rgbColor);
+            }
             modal.modal('hide');
         });
     }

@@ -1,51 +1,60 @@
-function addDomSingleObjName(newObjName, nbObj) {
-    var divElement = $("#objectDiv");
-    var html = '<hr><div class="row"><div class="col-md-6"><div id="object-' + nbObj + '" class="object" data-name="' + newObjName + '">' + newObjName + '</div></div><div class="col-md-6"><div id="removeOrAdd-' + nbObj + '" class="glyphicon glyphicon-minus-sign icon pull-right" onclick="removeOrAddObjFromScene(' + nbObj + ',1)"></div><div class="pull-right glyphicon glyphicon-cog icon" onclick="openModalMeshControl(' + nbObj + ');"></div></div></div><br><div class="row icon-bar"><div class="col-md-12"><span class="icon" aria-hidden="true"><img id="addOrRemoveNormal-' + nbObj + '" class="imgIcon" onclick="addOrRemoveNormalFromObj(' + nbObj + ')" src="./public/css/icon/Add_normal.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveWireframe-' + nbObj + '" class="imgIcon" onclick="addOrRemoveWireframe(' + nbObj + ')" src="./public/css/icon/add_Mesh.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveShadding-' + nbObj + '" onclick="addOrRemoveShading(' + nbObj + ')" class="imgIcon" src="./public/css/icon/add_Shadding.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveGColor-' + nbObj + '" onclick="addOrRemoveGColor(' + nbObj + ')" class="imgIcon" src="./public/css/icon/add_GColor.png"></span></div></div>';
-    if (nbObj == 0) {
-        html = '<div class="row"><div class="col-md-6"><div id="object-' + nbObj + '" class="object" data-name="' + newObjName + '">' + newObjName + '</div></div><div class="col-md-6"><div id="removeOrAdd-' + nbObj + '" class="glyphicon glyphicon-minus-sign icon pull-right" onclick="removeOrAddObjFromScene(' + nbObj + ',1)"></div><div class="pull-right glyphicon glyphicon-cog icon" onclick="openModalMeshControl(' + nbObj + ');"></div></div></div><br><div class="row icon-bar"><div class="col-md-12"><span class="icon" aria-hidden="true"><img id="addOrRemoveNormal-' + nbObj + '" class="imgIcon" onclick="addOrRemoveNormalFromObj(' + nbObj + ')" src="./public/css/icon/Add_normal.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveWireframe-' + nbObj + '" class="imgIcon" onclick="addOrRemoveWireframe(' + nbObj + ')" src="./public/css/icon/add_Mesh.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveShadding-' + nbObj + '" onclick="addOrRemoveShading(' + nbObj + ')" class="imgIcon" src="./public/css/icon/add_Shadding.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveGColor-' + nbObj + '" onclick="addOrRemoveGColor(' + nbObj + ')" class="imgIcon" src="./public/css/icon/add_GColor.png"></span></div></div>';
+function addDomSingleObjName(indexObj, name) {
+    var generalhtml = "",
+        igeshtml = '<span class="icon" aria-hidden="true"><img id="addOrRemoveGColor-' + indexObj + '" onclick="addOrRemoveGColor(' + indexObj + ')" class="imgIcon" src="./public/css/icon/add_GColor.png"></span>';
+    if (globalThreeOBJs.meshes[indexObj] instanceof igesMesh) {
+        html = generateHTML(indexObj, name, "<hr>", igeshtml);
+    } else {
+        if (indexObj == 0) {
+            html = generateHTML(indexObj, name, "", "");
+        } else {
+            html = html = generateHTML(indexObj, name, "<hr>", "");
+        }
     }
-    divElement.append(html);
+    $("#objectDiv").append(html);
 }
 
+function generateHTML(indexObj, name, delimiter, addHtmlForIges) {
+    return delimiter + '<div class="row"><div class="col-md-6"><div id="object-' + indexObj + '" class="object" data-name="' + name + '">' + name + '</div></div><div class="col-md-6"><div id="removeOrAdd-' + indexObj + '" class="glyphicon glyphicon-minus-sign icon pull-right" onclick="hideOrShowObj(' + indexObj + ')"></div><div class="pull-right glyphicon glyphicon-cog icon" onclick="openModalMeshControl(' + indexObj + ');"></div></div></div><br><div class="row icon-bar"><div class="col-md-12"><span class="icon" aria-hidden="true"><img id="addOrRemoveNormal-' + indexObj + '" class="imgIcon" onclick="addOrRemoveNormalFromObj(' + indexObj + ')" src="./public/css/icon/Add_normal.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveWireframe-' + indexObj + '" class="imgIcon" onclick="addOrRemoveWireframe(' + indexObj + ')" src="./public/css/icon/add_Mesh.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveShadding-' + indexObj + '" onclick="addOrRemoveShading(' + indexObj + ')" class="imgIcon" src="./public/css/icon/add_Shadding.png"></span>' + addHtmlForIges + '</div></div>';
+}
 
-function addNameToArray(name) {
-
-    var nameArr = globalThreeOBJs.arrObjName,
-        nbObj = globalThreeOBJs.meshes.length,
-        arrayNamesAreadyUsed = globalThreeOBJs.arrNameAlreadyUsed;
+function checkName(name) {
     var i = 0;
-    nameArr.forEach(function(n) {
-        if (n === name) {
-            arrayNamesAreadyUsed[i]++;
-            name = name + "(" + arrayNamesAreadyUsed[i] + ")";
+
+    globalThreeOBJs.meshes.forEach(function(object) {
+        if (object.name === name) {
+            globalThreeOBJs.arrNameAlreadyUsed.push(object.name);
         }
-        i++;
     });
 
-    addSingleNameArr(name);
-    addDomSingleObjName(name, nbObj);
+    globalThreeOBJs.arrNameAlreadyUsed.forEach(function(nameUsed) {
+        if (nameUsed === name) {
+            i++;
+        }
+    });
+    if (globalThreeOBJs.arrNameAlreadyUsed[i] != null) {
+        name = name + "(" + i + ")";
+    }
+    return name;
 }
 
 function moveNormals(indexObj) {
-    var normals = globalThreeOBJs.arrObjNormals[indexObj],
-        obj = globalThreeOBJs.meshes[indexObj];
+    var normals = globalThreeOBJs.meshes[indexObj].arrNorm,
+        objPos = globalThreeOBJs.meshes[indexObj].pos;
     normals.forEach(function(norm) {
-        norm.position.x = obj.position.x;
-        norm.position.y = obj.position.y;
-        norm.position.z = obj.position.z;
+        norm.position.x = objPos.x;
+        norm.position.y = objPos.y;
+        norm.position.z = objPos.z;
     });
 }
 
-function computeNormalsToObj(indexObj, objPosition) {
+function computeNormalsToObj(indexObj) {
     var geoNormal = null,
-        normal = null,
         normalMaterial = new THREE.LineBasicMaterial({
             color: 0xe00000,
             linewidth: 0.1
         }),
-        obj = globalThreeOBJs.meshes[indexObj],
-        pos = objPosition,
-        numSideTriangle = 3,
+        mesh = globalThreeOBJs.meshes[indexObj].obj,
+        pos = globalThreeOBJs.meshes[indexObj].pos,
         vts = null,
         nrs = null,
         v1x = 0,
@@ -62,11 +71,10 @@ function computeNormalsToObj(indexObj, objPosition) {
         newgeo = null,
         newVertices = null,
         scene = globalThree.scene,
-        globalNormals = globalThreeOBJs.arrObjNormals,
-        arrayNormals = new Array(),
+        globalNormals = globalThreeOBJs.meshes[indexObj].arrNorm,
         norm = 1;
 
-    obj.traverse(function(child) {
+    mesh.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
             initialGeometry = child.geometry;
             newgeo = new THREE.Geometry().fromBufferGeometry(initialGeometry);
@@ -99,72 +107,60 @@ function computeNormalsToObj(indexObj, objPosition) {
 
                 newVertices.push(point1, point2);
                 normal = new THREE.LineSegments(geoNormal, normalMaterial);
-                normal.needsUpdate = true;
-                arrayNormals.push(normal);
+                globalThreeOBJs.meshes[indexObj].arrNorm.push(normal);
             });
 
             initialGeometry = new THREE.BufferGeometry().fromGeometry(newgeo);
-            globalNormals.splice(indexObj, 1);
-            globalNormals.splice(indexObj, 0, arrayNormals);
-
         }
     });
 }
 
 function addNormalToObj(indexObj) {
 
-    var normals = globalThreeOBJs.arrObjNormals[indexObj],
+    var normals = globalThreeOBJs.meshes[indexObj].arrNorm,
         scene = globalThree.scene;
-    normals.forEach(function(normal) {
-        scene.add(normal);
+    normals.forEach(function(n) {
+        scene.add(n);
     });
 }
 
 function removeNormalFromObj(indexObj) {
 
-    var normals = globalThreeOBJs.arrObjNormals[indexObj],
+    var normals = globalThreeOBJs.meshes[indexObj].arrNorm,
         scene = globalThree.scene;
-
-    normals.forEach(function(normal) {
-        scene.remove(normal);
+    normals.forEach(function(n) {
+        scene.remove(n);
     });
 }
-
 
 function addOrRemoveNormalFromObj(indexObj) {
 
     var domObj = $("#addOrRemoveNormal-" + indexObj),
-        normalCondition = !globalThreeOBJs.arrNormalBool[indexObj],
-        objName = globalThreeOBJs.arrObjName[indexObj];
-    if (objName != null) {
-        if (normalCondition) {
-            addNormalToObj(indexObj, false);
-            domObj.attr("src", "./public/css/icon/remove_normal.png");
+        normalCondition = globalThreeOBJs.meshes[indexObj].n;
 
-        } else {
+    if (globalThreeOBJs.meshes[indexObj].name != null) {
+        if (normalCondition) {
             removeNormalFromObj(indexObj, false);
-            domObj.attr("src", "./public/css/icon/Add_normal.png");
+            $("#addOrRemoveNormal-" + indexObj).attr("src", "./public/css/icon/Add_normal.png");
+            globalThreeOBJs.meshes[indexObj].n = false;
+        } else {
+            addNormalToObj(indexObj, false);
+            $("#addOrRemoveNormal-" + indexObj).attr("src", "./public/css/icon/remove_normal.png");
+            globalThreeOBJs.meshes[indexObj].n = true;
         }
-        globalThreeOBJs.arrNormalBool.splice(indexObj, 1);
-        globalThreeOBJs.arrNormalBool.splice(indexObj, 0, normalCondition);
     }
 }
 
 function addShade(indexObj, modifiedFromWf) {
     var domElement = $("#addOrRemoveShadding-" + indexObj),
-        shades = globalThreeOBJs.shades,
-        obj = globalThreeOBJs.meshes[indexObj],
+        object3d = globalThreeOBJs.meshes[indexObj],
         geo = null,
         faces = null;
 
-    if (getGaussian(indexObj)[2]) {
-        console.log("bof");
-        setBoolGaussian(indexObj, false);
-        removeGaussianColor(indexObj);
-    }
     domElement.attr("src", "./public/css/icon/remove_Shadding.png");
-    obj.traverse(function(child) {
+    object3d.obj.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
+            child.material = new THREE.MeshBasicMaterial({ wireframe: object3d.wf, side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
             geo = new THREE.Geometry().fromBufferGeometry(child.geometry);
             faces = geo.faces;
             faces.forEach(function(f) {
@@ -173,214 +169,129 @@ function addShade(indexObj, modifiedFromWf) {
 
             });
             child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
-            child.material = new THREE.MeshBasicMaterial({ wireframe: globalThreeOBJs.wireframes[indexObj], side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
         }
     });
-    if (!modifiedFromWf) {
-        shades.splice(indexObj, 1);
-        shades.splice(indexObj, 0, false);
-    } else {
-        shades.splice(indexObj, 1);
-        shades.splice(indexObj, 0, true);
-    }
+    object3d.sh = true;
 }
 
 function removeShade(indexObj, modifiedFromCol) {
-    var domElement = $("#addOrRemoveShadding-" + indexObj),
-        wf = globalThreeOBJs.wireframes[indexObj],
-        shades = globalThreeOBJs.shades,
-        obj = globalThreeOBJs.meshes[indexObj],
-        objColor = "#" + globalThreeOBJs.hexacolors[indexObj].split("_")[0],
-        objMaterial = new THREE.MeshBasicMaterial({ color: objColor, wireframe: wf, side: THREE.DoubleSide });
 
-    domElement.attr("src", "./public/css/icon/add_Shadding.png");
-    obj.traverse(function(child) {
+    var object3d = globalThreeOBJs.meshes[indexObj],
+        objMaterial = new THREE.MeshBasicMaterial({ color: "#" + object3d.color.split("_")[0], wireframe: object3d.wf, side: THREE.DoubleSide });
+    $("#addOrRemoveShadding-" + indexObj).attr("src", "./public/css/icon/add_Shadding.png");
+    object3d.obj.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
+            child.material.needsUpdate = true;
             child.material = objMaterial;
         }
     });
-    if (!modifiedFromCol) {
-        shades.splice(indexObj, 1);
-        shades.splice(indexObj, 0, true);
-    } else {
-        shades.splice(indexObj, 1);
-        shades.splice(indexObj, 0, false);
-    }
+    object3d.sh = false;
 }
 
 function addOrRemoveShading(indexObj) {
 
-    var shades = globalThreeOBJs.shades,
-        sh = !shades[indexObj];
-
-    if (sh) {
-        addShade(indexObj, false);
-    } else {
+    if (globalThreeOBJs.meshes[indexObj].sh) {
         removeShade(indexObj, false);
+    } else {
+        addShade(indexObj, false);
     }
-    shades.splice(indexObj, 1);
-    shades.splice(indexObj, 0, sh);
 }
 
 function addOrRemoveGColor(indexObj) {
 
-    var gcolor = getGaussian(indexObj),
-        gc = !gcolor[2];
-
-    if (gc) {
-        addGaussianColor(indexObj);
-    } else {
+    if (globalThreeOBJs.meshes[indexObj].gc) {
         removeGaussianColor(indexObj);
+    } else {
+        addGaussianColor(indexObj);
     }
-    gcolor.splice(2, 1);
-    gcolor.splice(2, 0, gc);
 }
 
 function addGaussianColor(indexObj) {
-
-    var stringColors = getGaussian(indexObj)[1];
-
-    if (stringColors != undefined) {
-
-        var domElement = $("#addOrRemoveGColor-" + indexObj),
-            shades = globalThreeOBJs.shades,
-            obj = globalThreeOBJs.meshes[indexObj],
+    var domElement = $("#addOrRemoveGColor-" + indexObj),
+        object3d = globalThreeOBJs.meshes[indexObj];
+    if (object3d instanceof igesMesh) {
+        var stringColors = object3d.strGcurv,
             geo = null,
             faces = null;
-
-        if (shades[indexObj] == true) {
-            shades[indexObj] = false;
-            removeShade(indexObj, true);
-        }
         domElement.attr("src", "./public/css/icon/remove_GColor.png");
-        obj.traverse(function(child) {
+        object3d.obj.traverse(function(child) {
             if (child instanceof THREE.Mesh) {
+                console.log(object3d.wh);
+                child.material = new THREE.MeshBasicMaterial({ wireframe: object3d.wh, side: THREE.DoubleSide, vertexColors: THREE.VertexColors });
                 geo = new THREE.Geometry().fromBufferGeometry(child.geometry);
                 faces = geo.faces;
                 var faceColors = stringColors.split("\n"),
                     nbface = 0;
-
                 var c, f = 0;
-
                 for (c = 0; c < faceColors.length; c++) {
-
                     if (faceColors[c] != "") {
                         var col = faceColors[c].split("  ");
-
                         for (f = nbface; f < nbface + 2; f++) {
                             if (faceColors[c] != "" && faces[f] != undefined) {
                                 faces[f].color.setRGB(col[0], col[1], col[2]);
-                                faces[f].needsUpdate = true;
                             }
                         }
                         nbface += 2;
                     }
-
                 }
-
                 child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
-                child.material = new THREE.MeshBasicMaterial({ wireframe: globalThreeOBJs.wireframes[indexObj], side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
             }
         });
-        setBoolGaussian(indexObj, true);
+        object3d.gc = true;
     }
 }
+
 
 function removeGaussianColor(indexObj) {
 
 
-    var domElement = $("#addOrRemoveGColor-" + indexObj),
-        shades = globalThreeOBJs.shades,
-        obj = globalThreeOBJs.meshes[indexObj],
-        objColor = "#" + globalThreeOBJs.hexacolors[indexObj].split("_")[0],
-        objMaterial = new THREE.MeshBasicMaterial({ color: objColor, side: THREE.DoubleSide, wireframe: globalThreeOBJs.wireframes[indexObj] }),
-        geo = null,
-        faces = null;
-
-    domElement.attr("src", "./public/css/icon/add_GColor.png");
-
-    setBoolGaussian(indexObj, false);
-
-    obj.traverse(function(child) {
+    var object3d = globalThreeOBJs.meshes[indexObj];
+    $("#addOrRemoveGColor-" + indexObj).attr("src", "./public/css/icon/add_GColor.png");
+    object3d.obj.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
-            child.material = objMaterial;
+            child.material = new THREE.MeshBasicMaterial({ color: "#" + object3d.color.split("_")[0], side: THREE.DoubleSide, wireframe: object3d.wh });
         }
     });
-
+    object3d.gc = false;
 }
-
-
-function getGaussian(indexObj) {
-    var gaussianElements = new Array();
-    globalThreeOBJs.gaussianCurvature.forEach(function(el) {
-        if (el[0] == indexObj) {
-            gaussianElements = el;
-        }
-    });
-    return gaussianElements;
-}
-
-function setBoolGaussian(indexObj, condition) {
-    globalThreeOBJs.gaussianCurvature.forEach(function(el) {
-        if (el[0] == indexObj) {
-            el[2] = condition;
-        }
-    });
-}
-
 
 function setObjectColor(hexCol, rgbColor) {
 
-    var focus = globalThreeOBJs.objOnFocus,
-        obj = globalThreeOBJs.meshes[focus],
-        wf = globalThreeOBJs.wireframes[focus];
+    if (hexCol != undefined || rgbColor != undefined) {
+        var focus = globalThreeOBJs.objOnFocus,
+            object3d = globalThreeOBJs.meshes[focus];
 
-    globalThreeOBJs.hexacolors.splice(focus, 1);
-    globalThreeOBJs.hexacolors.splice(focus, 0, hexCol + "_" + rgbColor);
-
-    objMat = new THREE.MeshBasicMaterial({ color: "#" + hexCol, side: THREE.DoubleSide, wireframe: wf });
-
-    if (globalThreeOBJs.shades[focus]) {
-        removeShade(focus, true);
+        object3d.color = hexCol + "_" + rgbColor;
+        object3d.obj.traverse(function(child) {
+            child.material = new THREE.MeshBasicMaterial({ color: "#" + hexCol, side: THREE.DoubleSide, wireframe: object3d.wf });;
+        });
     }
-
-    globalThreeOBJs.meshes[focus].traverse(function(child) {
-        child.material = objMat;
-    });
-
 }
 
-function manageWireframe(indexObj, wf) {
-    var hexaColor = "#" + globalThreeOBJs.hexacolors[indexObj].split("_")[0],
-        objMat = new THREE.MeshBasicMaterial({ color: hexaColor, side: THREE.DoubleSide, wireframe: wf }),
-        obj = globalThreeOBJs.meshes[indexObj];
+function manageWireframe(indexObj, wirfra) {
 
-    obj.traverse(function(child) {
-        child.material = objMat;
+    var object3d = globalThreeOBJs.meshes[indexObj];
+    object3d.obj.traverse(function(child) {
+        child.material = new THREE.MeshBasicMaterial({ color: "#" + object3d.color.split("_")[0], wireframe: wirfra, side: THREE.DoubleSide });
     });
+    object3d.wf = wirfra;
 }
 
 function addOrRemoveWireframe(indexObj) {
 
-    var wf = !globalThreeOBJs.wireframes[indexObj],
-        objShade = globalThreeOBJs.shades[indexObj],
-        objGaussian = getGaussian(indexObj)[2],
-        domElement = $("#addOrRemoveWireframe-" + indexObj);
+    var domElement = $("#addOrRemoveWireframe-" + indexObj);
 
-    if (wf) {
-        domElement.attr("src", "./public/css/icon/remove_Mesh.png");
-        manageWireframe(indexObj, wf);
-    } else {
+    if (globalThreeOBJs.meshes[indexObj].wf) {
         domElement.attr("src", "./public/css/icon/add_Mesh.png");
-        manageWireframe(indexObj, wf);
+        manageWireframe(indexObj, false);
+    } else {
+        domElement.attr("src", "./public/css/icon/remove_Mesh.png");
+        manageWireframe(indexObj, true);
     }
-
-    globalThreeOBJs.wireframes.splice(indexObj, 1);
-    globalThreeOBJs.wireframes.splice(indexObj, 0, wf);
-    if (objShade) {
+    if (globalThreeOBJs.meshes[indexObj].sh) {
         addShade(indexObj, true);
     }
-    if (objGaussian) {
+    if (globalThreeOBJs.meshes[indexObj].gc) {
         addGaussianColor(indexObj);
     }
 }
@@ -392,34 +303,35 @@ function objectLoader(name) {
         initialObjColors = "ffffff_rgb(255, 255, 255)",
         funHelpArr = globalThreeOBJs.helperFunctions;
 
+
     if (name != "") {
-        addNameToArray(name);
+        name = checkName(name);
         $("#loadError").html("");
         try {
-            globalThreeOBJs.objloader.load(path, function(obj) {
-                obj.traverse(function(child) {
+            globalThreeOBJs.objloader.load(path, function(object) {
+                object.traverse(function(child) {
                     if (child instanceof THREE.Mesh) {
-                        child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, wireframe: false, vertexColors: THREE.NoColors });
-                        if (globalThreeOBJs.arrObjName[globalThreeOBJs.arrObjName.length - 1] == "Scene") {
+                        child.material.needsUpdate = true;
+                        if (name == "Scene" && globalThreeOBJs.meshes.length == 0) {
                             child.material = new THREE.MeshBasicMaterial({ color: 0x6666ff, side: THREE.DoubleSide, wireframe: false, vertexColors: THREE.NoColors });
                             initialObjColors = "6666ff_rgb(102, 102, 255)";
+                        } else {
+                            child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, wireframe: false, vertexColors: THREE.NoColors });
                         }
                     }
                 });
-                obj.castShadow = true;
-                obj.receiveShadow = true;
-                obj.needsUpdate = true;
-                globalThreeOBJs.arrNameAlreadyUsed.push(0);
-                globalThreeOBJs.arrNormalBool.push(false);
-                globalThreeOBJs.hexacolors.push(initialObjColors);
-                globalThreeOBJs.wireframes.push(false);
-                globalThreeOBJs.shades.push(false);
-                addIntoObjArr(obj);
-                addtoScene(obj);
-                computeNormalsToObj(numberOfMeshes, obj.position);
-                $("#currentMeshPosX").html(obj.position.x);
-                $("#currentMeshPosY").html(obj.position.y);
-                $("#currentMeshPosZ").html(obj.position.z);
+
+                object.castShadow = true;
+                object.receiveShadow = true;
+                object.needsUpdate = true;
+                var obj3D = new mesh(numberOfMeshes, object, name, object.position, initialObjColors, false, false, false, false, new Array(), new Array());
+                addIntoObjArr(obj3D);
+                addDomSingleObjName(obj3D.id, obj3D.name);
+                addtoScene(obj3D.obj);
+                computeNormalsToObj(obj3D.id);
+                $("#currentMeshPosX").html(obj3D.pos.x);
+                $("#currentMeshPosY").html(obj3D.pos.y);
+                $("#currentMeshPosZ").html(obj3D.pos.z);
 
             }, funHelpArr[0], funHelpArr[1]);
 
@@ -465,42 +377,39 @@ function addOrRemoveAxes() {
     }
 }
 
-function removeOrAddObjFromScene(indexObj, nbToRemove) {
+function hideOrShowObj(indexObj) {
 
     var domObj = $("#removeOrAdd-" + indexObj),
-        name = null;
+        object3d = globalThreeOBJs.meshes[indexObj];
 
-    manageWireframe(indexObj, globalThreeOBJs.wireframes[indexObj]);
-
-    if (globalThreeOBJs.arrObjName[indexObj] != null) {
-        globalThree.scene.remove(globalThreeOBJs.meshes[indexObj]);
-        globalThreeOBJs.arrObjName.splice(indexObj, nbToRemove);
-        globalThreeOBJs.arrObjName.splice(indexObj, 0, null);
-        if (globalThreeOBJs.arrNormalBool[indexObj]) {
-            removeNormalFromObj(indexObj);
-        }
-
-        domObj.removeClass("glyphicon-minus-sign");
-        domObj.addClass("glyphicon-plus-sign");
-    } else {
+    if (object3d.hidden) {
         name = $("#object-" + indexObj).data("name");
-        globalThree.scene.add(globalThreeOBJs.meshes[indexObj]);
-        globalThreeOBJs.arrObjName.splice(indexObj, nbToRemove);
-        globalThreeOBJs.arrObjName.splice(indexObj, 0, name);
-        if (globalThreeOBJs.arrNormalBool[indexObj]) {
+        globalThree.scene.add(object3d.obj);
+        if (object3d.n) {
             addNormalToObj(indexObj);
         }
-        if (globalThreeOBJs.shades[indexObj]) {
+        if (object3d.sh) {
             addShade(indexObj, true)
         }
-        if (getGaussian()[2]) {
+        if (object3d instanceof igesMesh && object3d.gc) {
             addGaussianColor(indexObj);
         }
+        if (object3d.wh) {
+            manageWireframe(indexObj, object3d.wh);
+        }
+        object3d.hidden = false;
         domObj.removeClass("glyphicon-plus-sign");
         domObj.addClass("glyphicon-minus-sign");
+
+    } else {
+        globalThree.scene.remove(object3d.obj);
+        if (object3d.n) {
+            removeNormalFromObj(indexObj);
+        }
+        object3d.hidden = true;
+        domObj.removeClass("glyphicon-minus-sign");
+        domObj.addClass("glyphicon-plus-sign");
     }
-
-
 }
 
 function addIntoObjArr(obj) {
@@ -517,6 +426,5 @@ function addtoScene(obj) {
 
 //https: //github.com/blueimp/jQuery-File-Upload
 //http://jscolor.com/
-//https://www.npmjs.com/package/thread-js
 //http://learningthreejs.com/blog/2013/06/25/monitor-rendering-performance-within-threejs/
 //https://jsperf.com/

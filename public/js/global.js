@@ -10,6 +10,7 @@ var globalThree = {
 };
 var globalCam = {
     camera: new THREE.PerspectiveCamera(50, 1, 0.1, 10000),
+    orbitControl: null,
     initialCamPos: [21, 12, 22],
     freeCam: false,
     camPosX: null,
@@ -20,15 +21,9 @@ var globalCam = {
 var globalThreeOBJs = {
 
     meshes: new Array(),
-    arrObjName: new Array(),
-    arrNameAlreadyUsed: new Array(),
-    arrObjNormals: new Array(),
-    arrNormalBool: new Array(),
-    hexacolors: new Array(),
-    wireframes: new Array(),
-    shades: new Array(),
-    gaussianCurvature: new Array(),
+    arrNameAlreadyUsed: new Array(null),
     objloader: new THREE.OBJLoader2(),
+    dragControl: null,
     initialObjPos: [0, 0, 0],
     helperFunctions: [onProgress, onError],
     domUlObjLenght: 120,
@@ -36,12 +31,28 @@ var globalThreeOBJs = {
     objOnFocus: 0
 };
 
-var globalMouse = {
-    windowHalfX: window.innerWidth / 2,
-    windowHalfY: window.innerHeight / 2,
-    mouseX: 0,
-    mouseY: 0,
-    speedMouseWheel: 0.0001
+class mesh {
+    constructor(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade) {
+        this.id = id;
+        this.obj = obj;
+        this.name = name;
+        this.pos = pos;
+        this.color = color;
+        this.wf = wf;
+        this.sh = sh;
+        this.n = n;
+        this.hidden = hidden;
+        this.arrNorm = arrNorm;
+        this.arrShade = arrShade;
+    }
+};
+
+class igesMesh extends mesh {
+    constructor(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade, gc, strGcurv) {
+        super(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade);
+        this.gc = gc;
+        this.strGcurv = strGcurv;
+    }
 };
 
 function onProgress(xhr) {
@@ -55,15 +66,8 @@ function onError(xhr) {}
 
 function onWindowResize() {
 
-    globalMouse.windowHalfX = window.innerWidth / 2;
-    globalMouse.windowHalfY = window.innerHeight / 2;
     globalCam.camera.aspect = window.innerWidth / window.innerHeight;
     globalCam.camera.updateProjectionMatrix();
     globalThree.renderer.setSize(window.innerWidth, window.innerHeight);
 
-}
-
-function onDocumentMouseMove(event) {
-    globalMouse.mouseX = (event.clientX - globalMouse.windowHalfX) / 2;
-    globalMouse.mouseY = (event.clientY - globalMouse.windowHalfY) / 2;
 }

@@ -196,21 +196,7 @@
                     </div>
                    '>
         </div>
-        <div hidden id="displayControlLight" data-functionality="Ambient Light options" data-content='
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label>Color</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input id="bgcolor-button" class="pick-a-color hexLightColor form-control" value="ffffff">
-                            </div>
-                        </div>
-                    </div>
-                   '>
-        </div>
-        <div id="mainModal" class="modal fade" tabindex="-1" role="dialog">
+        <div id="meshModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -229,6 +215,25 @@
                 </div>
             </div>
         </div>
+        <div id="camModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="cammodalContent">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <div id="cambtnValidation" class="btn btn-success">Apply</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div hidden id="screenLoad"></div>
 </body>
 
@@ -236,6 +241,8 @@
 <script src="./public/js/jquery-mousewheel-master/jquery.mousewheel.min.js"></script>
 <script src="./public/bootstrap/js/bootstrap.min.js"></script>
 <script src="./public/js/threeJS/build/three.js"></script>
+<script src="./public/js/threeJS/examples/js/controls/OrbitControls.js"></script>
+<script src="./public/js/threeJS/examples/js/controls/DragControls.js"></script>
 <script src="./public/js/threeJS/examples/js/loaders/OBJLoader2.js"></script>
 <script src="./public/js/global.js"></script>
 <script src="./public/js/tinycolor-0.9.15.min.js"></script>
