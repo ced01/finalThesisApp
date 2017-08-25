@@ -99,6 +99,7 @@ function animate() {
 
 function init(container) {
 
+
     moveCamera(globalCam.initialCamPos[0], globalCam.initialCamPos[1], globalCam.initialCamPos[2]);
     openModalCamControl(globalCam.camera);
     createAxe(new THREE.Vector3(-30, 0, 0), new THREE.Vector3(30, 0, 0), new THREE.MeshBasicMaterial({ color: 0xff1fff }));
@@ -113,8 +114,4 @@ function init(container) {
     objectLoader("Scene", false);
     globalCam.orbitControls = new THREE.OrbitControls(globalCam.camera, globalThree.renderer.domElement);
     globalCam.orbitControls.addEventListener('change', render);
-    /*globalThree.dragControls = new THREE.DragControls(globalThreeOBJs.meshes, globalCam.camera, globalThree.renderer.domElement);
-    globalThree.dragControls.addEventListener('dragstart', function(event) { controls.enabled = false; });
-    globalThree.dragControls.addEventListener('dragend', function(event) { controls.enabled = true; });*/
-
 }

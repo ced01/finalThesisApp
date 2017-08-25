@@ -40,29 +40,20 @@ function checkName(name) {
 function moveNormals(indexObj) {
     var normals = globalThreeOBJs.meshes[indexObj].arrNorm,
         objPos = globalThreeOBJs.meshes[indexObj].pos;
-    normals.forEach(function(norm) {
-        norm.position.x = objPos.x;
-        norm.position.y = objPos.y;
-        norm.position.z = objPos.z;
-    });
+    if (normals instanceof THREE.LineSegments) {
+        normals.geometry.verticesNeedUpdate = true;
+        normals.position.x = objPos.x;
+        normals.position.y = objPos.y;
+        normals.position.z = objPos.z;
+    }
 }
 
 function computeNormalsToObj(indexObj) {
     var geoNormal = null,
-        normalMaterial = new THREE.LineBasicMaterial({
-            color: 0xe00000,
-            linewidth: 0.1
-        }),
         mesh = globalThreeOBJs.meshes[indexObj].obj,
         pos = globalThreeOBJs.meshes[indexObj].pos,
         vts = null,
         nrs = null,
-        v1x = 0,
-        v1y = 0,
-        v1z = 0,
-        v2x = 0,
-        v2y = 0,
-        v2z = 0,
         vfa = 0,
         vfb = 0,
         vfc = 0,
@@ -74,6 +65,7 @@ function computeNormalsToObj(indexObj) {
         globalNormals = globalThreeOBJs.meshes[indexObj].arrNorm,
         norm = 1;
 
+    var globalGeo = new THREE.Geometry();
     mesh.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
             initialGeometry = child.geometry;
@@ -92,45 +84,43 @@ function computeNormalsToObj(indexObj) {
                 nrc = nrs[2];
                 norm = Math.sqrt((nra.x + nrb.x + nrc.x) * (nra.x + nrb.x + nrc.x) + (nra.y + nrb.y + nrc.y) * (nra.y + nrb.y + nrc.y) + (nra.z + nrb.z + nrc.z) * (nra.z + nrb.z + nrc.z));
 
-                newVertices = geoNormal.vertices;
+                var v1 = new THREE.Vector3(),
+                    v2 = new THREE.Vector3();
 
-                v1x = (vfc.x + vfa.x + vfb.x) / 3 + pos.x;
-                v1y = (vfc.y + vfa.y + vfb.y) / 3 + pos.y;
-                v1z = (vfc.z + vfa.z + vfb.z) / 3 + pos.z;
+                v1.x = (vfc.x + vfa.x + vfb.x) / 3 + pos.x;
+                v1.y = (vfc.y + vfa.y + vfb.y) / 3 + pos.y;
+                v1.z = (vfc.z + vfa.z + vfb.z) / 3 + pos.z;
 
-                v2x = v1x + (nra.x + nrb.x + nrc.x) / norm;
-                v2y = v1y + (nra.y + nrb.y + nrc.y) / norm;
-                v2z = v1z + (nra.z + nrb.z + nrc.z) / norm;
+                v2.x = v1.x + (nra.x + nrb.x + nrc.x) / norm;
+                v2.y = v1.y + (nra.y + nrb.y + nrc.y) / norm;
+                v2.z = v1.z + (nra.z + nrb.z + nrc.z) / norm;
 
-                var point1 = new THREE.Vector3(v1x, v1y, v1z),
-                    point2 = new THREE.Vector3(v2x, v2y, v2z);
+                geoNormal.vertices.push(v1);
+                geoNormal.vertices.push(v2);
 
-                newVertices.push(point1, point2);
-                normal = new THREE.LineSegments(geoNormal, normalMaterial);
-                globalThreeOBJs.meshes[indexObj].arrNorm.push(normal);
+                globalGeo.merge(geoNormal);
             });
-
-            initialGeometry = new THREE.BufferGeometry().fromGeometry(newgeo);
         }
     });
+    globalThreeOBJs.meshes[indexObj].arrNorm = globalGeo;
 }
 
 function addNormalToObj(indexObj) {
 
-    var normals = globalThreeOBJs.meshes[indexObj].arrNorm,
-        scene = globalThree.scene;
-    normals.forEach(function(n) {
-        scene.add(n);
-    });
+    var normalMaterial = new THREE.LineBasicMaterial({
+            color: 0xe00000,
+            linewidth: 0.3
+        }),
+        normalMesh = globalThreeOBJs.meshes[indexObj].arrNorm;
+    if (!(normalMesh instanceof THREE.LineSegments)) {
+        normalMesh = new THREE.LineSegments(normalMesh, normalMaterial);
+        globalThreeOBJs.meshes[indexObj].arrNorm = normalMesh;
+    }
+    globalThree.scene.add(normalMesh);
 }
 
 function removeNormalFromObj(indexObj) {
-
-    var normals = globalThreeOBJs.meshes[indexObj].arrNorm,
-        scene = globalThree.scene;
-    normals.forEach(function(n) {
-        scene.remove(n);
-    });
+    globalThree.scene.remove(globalThreeOBJs.meshes[indexObj].arrNorm);
 }
 
 function addOrRemoveNormalFromObj(indexObj) {
@@ -164,9 +154,8 @@ function addShade(indexObj, modifiedFromWf) {
             geo = new THREE.Geometry().fromBufferGeometry(child.geometry);
             faces = geo.faces;
             faces.forEach(function(f) {
-                f.needsUpdate = true;
+                f.color.needsUpdate = true;
                 f.color.setRGB(Math.abs(f.normal.x), Math.abs(f.normal.y), Math.abs(f.normal.z));
-
             });
             child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
         }
@@ -181,7 +170,6 @@ function removeShade(indexObj, modifiedFromCol) {
     $("#addOrRemoveShadding-" + indexObj).attr("src", "./public/css/icon/add_Shadding.png");
     object3d.obj.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
-            child.material.needsUpdate = true;
             child.material = objMaterial;
         }
     });
@@ -207,49 +195,62 @@ function addOrRemoveGColor(indexObj) {
 }
 
 function addGaussianColor(indexObj) {
-    var domElement = $("#addOrRemoveGColor-" + indexObj),
-        object3d = globalThreeOBJs.meshes[indexObj];
-    if (object3d instanceof igesMesh) {
-        var stringColors = object3d.strGcurv,
-            geo = null,
-            faces = null;
-        domElement.attr("src", "./public/css/icon/remove_GColor.png");
-        object3d.obj.traverse(function(child) {
-            if (child instanceof THREE.Mesh) {
-                console.log(object3d.wh);
-                child.material = new THREE.MeshBasicMaterial({ wireframe: object3d.wh, side: THREE.DoubleSide, vertexColors: THREE.VertexColors });
-                geo = new THREE.Geometry().fromBufferGeometry(child.geometry);
-                faces = geo.faces;
-                var faceColors = stringColors.split("\n"),
-                    nbface = 0;
-                var c, f = 0;
-                for (c = 0; c < faceColors.length; c++) {
-                    if (faceColors[c] != "") {
-                        var col = faceColors[c].split("  ");
-                        for (f = nbface; f < nbface + 2; f++) {
-                            if (faceColors[c] != "" && faces[f] != undefined) {
-                                faces[f].color.setRGB(col[0], col[1], col[2]);
-                            }
-                        }
-                        nbface += 2;
-                    }
-                }
-                child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
-            }
-        });
-        object3d.gc = true;
+
+    var object3d = globalThreeOBJs.meshes[indexObj];
+
+    if (object3d.strGcurv == "") {
+        console.log(object3d);
+        var instance = new Module.FinalSurface(object3d.file, ~~globalThreeOBJs.meshSize);
+        instance.computeGaussian();
+        object3d.strGcurv = instance.G_colors_output;
+        instance.delete();
     }
+
+    var faceColors = object3d.strGcurv.split("\n"),
+        nbface = 0,
+        c, ca, f = 0,
+        col = "",
+        arr = new Array(),
+        finalArr = new Array(),
+        geo = null,
+        faces = null;
+
+    $("#addOrRemoveGColor-" + indexObj).attr("src", "./public/css/icon/remove_GColor.png");
+    object3d.obj.traverse(function(child) {
+        if (child instanceof THREE.Mesh) {
+            child.material = new THREE.MeshBasicMaterial({ wireframe: object3d.wf, side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
+            geo = new THREE.Geometry().fromBufferGeometry(child.geometry);
+            faces = geo.faces;
+            for (c = 0; c < faceColors.length; c++) {
+                if (faceColors[c] != "") {
+                    arr.push(faceColors[c]);
+                    arr.push(faceColors[c]);
+                }
+            }
+            for (ca = 0; ca < arr.length; ca++) {
+                col = arr[ca].split("  ");
+                finalArr.push(col);
+            }
+            faces.forEach(function(f) {
+                f.color.needsUpdate = true;
+                f.color.r = finalArr[nbface][0];
+                f.color.g = finalArr[nbface][1];
+                f.color.b = finalArr[nbface][2];
+                nbface++;
+            });
+            child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
+        }
+    });
+    object3d.gc = true;
 }
 
 
 function removeGaussianColor(indexObj) {
-
-
     var object3d = globalThreeOBJs.meshes[indexObj];
     $("#addOrRemoveGColor-" + indexObj).attr("src", "./public/css/icon/add_GColor.png");
     object3d.obj.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
-            child.material = new THREE.MeshBasicMaterial({ color: "#" + object3d.color.split("_")[0], side: THREE.DoubleSide, wireframe: object3d.wh });
+            child.material = new THREE.MeshBasicMaterial({ color: "#" + object3d.color.split("_")[0], wireframe: object3d.wf, side: THREE.DoubleSide });
         }
     });
     object3d.gc = false;
@@ -260,10 +261,9 @@ function setObjectColor(hexCol, rgbColor) {
     if (hexCol != undefined || rgbColor != undefined) {
         var focus = globalThreeOBJs.objOnFocus,
             object3d = globalThreeOBJs.meshes[focus];
-
         object3d.color = hexCol + "_" + rgbColor;
         object3d.obj.traverse(function(child) {
-            child.material = new THREE.MeshBasicMaterial({ color: "#" + hexCol, side: THREE.DoubleSide, wireframe: object3d.wf });;
+            child.material = new THREE.MeshBasicMaterial({ color: "#" + hexCol, wireframe: object3d.wf, side: THREE.DoubleSide });;
         });
     }
 }
@@ -272,7 +272,11 @@ function manageWireframe(indexObj, wirfra) {
 
     var object3d = globalThreeOBJs.meshes[indexObj];
     object3d.obj.traverse(function(child) {
-        child.material = new THREE.MeshBasicMaterial({ color: "#" + object3d.color.split("_")[0], wireframe: wirfra, side: THREE.DoubleSide });
+        if (globalThreeOBJs.meshes[indexObj].sh || globalThreeOBJs.meshes[indexObj].gc) {
+            child.material = new THREE.MeshBasicMaterial({ wireframe: wirfra, side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
+        } else {
+            child.material = new THREE.MeshBasicMaterial({ color: "#" + object3d.color.split("_")[0], wireframe: wirfra, side: THREE.DoubleSide });
+        }
     });
     object3d.wf = wirfra;
 }
@@ -287,12 +291,6 @@ function addOrRemoveWireframe(indexObj) {
     } else {
         domElement.attr("src", "./public/css/icon/remove_Mesh.png");
         manageWireframe(indexObj, true);
-    }
-    if (globalThreeOBJs.meshes[indexObj].sh) {
-        addShade(indexObj, true);
-    }
-    if (globalThreeOBJs.meshes[indexObj].gc) {
-        addGaussianColor(indexObj);
     }
 }
 
@@ -324,7 +322,7 @@ function objectLoader(name) {
                 object.castShadow = true;
                 object.receiveShadow = true;
                 object.needsUpdate = true;
-                var obj3D = new mesh(numberOfMeshes, object, name, object.position, initialObjColors, false, false, false, false, new Array(), new Array());
+                var obj3D = new mesh(numberOfMeshes, object, name, object.position, initialObjColors, false, false, false, false, null, new Array());
                 addIntoObjArr(obj3D);
                 addDomSingleObjName(obj3D.id, obj3D.name);
                 addtoScene(obj3D.obj);

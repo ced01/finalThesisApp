@@ -25,7 +25,7 @@ var globalThreeOBJs = {
     objloader: new THREE.OBJLoader2(),
     dragControl: null,
     initialObjPos: [0, 0, 0],
-    helperFunctions: [onProgress, onError],
+    helperFunctions: [onProgress],
     domUlObjLenght: 120,
     meshSize: 3,
     objOnFocus: 0
@@ -48,8 +48,9 @@ class mesh {
 };
 
 class igesMesh extends mesh {
-    constructor(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade, gc, strGcurv) {
+    constructor(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade, file, gc, strGcurv) {
         super(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade);
+        this.file = file;
         this.gc = gc;
         this.strGcurv = strGcurv;
     }
@@ -61,8 +62,6 @@ function onProgress(xhr) {
         console.log(Math.round(percentComplete, 2) + '% downloaded');
     }
 }
-
-function onError(xhr) {}
 
 function onWindowResize() {
 
