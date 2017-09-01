@@ -107,12 +107,17 @@ function computeNormalsToObj(indexObj) {
 
 function addNormalToObj(indexObj) {
 
+    if (globalThreeOBJs.meshes[indexObj].arrNorm == null) {
+        computeNormalsToObj(globalThreeOBJs.meshes[indexObj].id);
+    }
     var normalMaterial = new THREE.LineBasicMaterial({
             color: 0xe00000,
             linewidth: 0.3
         }),
         normalMesh = globalThreeOBJs.meshes[indexObj].arrNorm;
+
     if (!(normalMesh instanceof THREE.LineSegments)) {
+
         normalMesh = new THREE.LineSegments(normalMesh, normalMaterial);
         globalThreeOBJs.meshes[indexObj].arrNorm = normalMesh;
     }
@@ -195,47 +200,51 @@ function addOrRemoveGColor(indexObj) {
 }
 
 function addGaussianColor(indexObj) {
-
-    var object3d = globalThreeOBJs.meshes[indexObj];
-
+    var object3d = globalThreeOBJs.meshes[indexObj],
+        nbface = 0,
+        geo = null,
+        faces = null;
     if (object3d.strGcurv == "") {
-        console.log(object3d);
         var instance = new Module.FinalSurface(object3d.file, ~~globalThreeOBJs.meshSize);
         instance.computeGaussian();
         object3d.strGcurv = instance.G_colors_output;
         instance.delete();
+
+        var faceColors = object3d.strGcurv.split("\n"),
+            initialArr = new Array("0", "0", "0"),
+            currentPoint = initialArr,
+            previousPoint = initialArr,
+            meshQPoint = initialArr,
+            qm = parseInt(globalThreeOBJs.meshSize),
+            c;
+
+        for (c = 0; c < faceColors.length - 2; c++) {
+            if (c % (qm - 1) != 0) {
+                currentPoint = faceColors[c].split("  ");
+                if (c - 1 > 0) {
+                    previousPoint = faceColors[c - 1].split("  ");
+                }
+                if (c + qm < faceColors.length - 2) {
+                    meshQPoint = faceColors[c + qm].split("  ");
+                }
+                arr = new Array();
+                r = (parseFloat(currentPoint[0]) + parseFloat(previousPoint[0]) + parseFloat(meshQPoint[0])) / 3;
+                g = (parseFloat(currentPoint[1]) + parseFloat(previousPoint[1]) + parseFloat(meshQPoint[1])) / 3;
+                b = (parseFloat(currentPoint[2]) + parseFloat(previousPoint[2]) + parseFloat(meshQPoint[2])) / 3;
+                arr.push(r.toString(), g.toString(), b.toString());
+                object3d.arrayColorG.push(arr, arr);
+
+            }
+        }
     }
-
-    var faceColors = object3d.strGcurv.split("\n"),
-        nbface = 0,
-        c, ca, f = 0,
-        col = "",
-        arr = new Array(),
-        finalArr = new Array(),
-        geo = null,
-        faces = null;
-
     $("#addOrRemoveGColor-" + indexObj).attr("src", "./public/css/icon/remove_GColor.png");
     object3d.obj.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
             child.material = new THREE.MeshBasicMaterial({ wireframe: object3d.wf, side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
             geo = new THREE.Geometry().fromBufferGeometry(child.geometry);
             faces = geo.faces;
-            for (c = 0; c < faceColors.length; c++) {
-                if (faceColors[c] != "") {
-                    arr.push(faceColors[c]);
-                    arr.push(faceColors[c]);
-                }
-            }
-            for (ca = 0; ca < arr.length; ca++) {
-                col = arr[ca].split("  ");
-                finalArr.push(col);
-            }
             faces.forEach(function(f) {
-                f.color.needsUpdate = true;
-                f.color.r = finalArr[nbface][0];
-                f.color.g = finalArr[nbface][1];
-                f.color.b = finalArr[nbface][2];
+                f.color.setRGB(object3d.arrayColorG[nbface][0], object3d.arrayColorG[nbface][1], object3d.arrayColorG[nbface][2]);
                 nbface++;
             });
             child.geometry = new THREE.BufferGeometry().fromGeometry(geo);
@@ -326,7 +335,6 @@ function objectLoader(name) {
                 addIntoObjArr(obj3D);
                 addDomSingleObjName(obj3D.id, obj3D.name);
                 addtoScene(obj3D.obj);
-                computeNormalsToObj(obj3D.id);
                 $("#currentMeshPosX").html(obj3D.pos.x);
                 $("#currentMeshPosY").html(obj3D.pos.y);
                 $("#currentMeshPosZ").html(obj3D.pos.z);

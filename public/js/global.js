@@ -48,11 +48,12 @@ class mesh {
 };
 
 class igesMesh extends mesh {
-    constructor(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade, file, gc, strGcurv) {
+    constructor(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade, file, gc, strGcurv, arrayColorG) {
         super(id, obj, name, pos, color, wf, sh, n, hidden, arrNorm, arrShade);
         this.file = file;
         this.gc = gc;
         this.strGcurv = strGcurv;
+        this.arrayColorG = arrayColorG;
     }
 };
 
