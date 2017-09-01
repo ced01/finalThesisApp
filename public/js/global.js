@@ -1,3 +1,4 @@
+"use strict";
 var globalThree = {
 
     renderer: new THREE.WebGLRenderer(),
@@ -67,7 +68,6 @@ function onProgress(xhr) {
 function onWindowResize() {
 
     globalCam.camera.aspect = window.innerWidth / window.innerHeight;
-    globalCam.camera.updateProjectionMatrix();
     globalThree.renderer.setSize(window.innerWidth, window.innerHeight);
-
+    globalCam.camera.updateProjectionMatrix();
 }

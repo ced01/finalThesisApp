@@ -309,8 +309,6 @@ function objectLoader(name) {
         numberOfMeshes = globalThreeOBJs.meshes.length,
         initialObjColors = "ffffff_rgb(255, 255, 255)",
         funHelpArr = globalThreeOBJs.helperFunctions;
-
-
     if (name != "") {
         name = checkName(name);
         $("#loadError").html("");

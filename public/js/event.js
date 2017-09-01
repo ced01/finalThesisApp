@@ -15,6 +15,7 @@ function personalLoad(reader, fileName) {
         myObj = null,
         obj3DIges = null;
     instance.computeData();
+    fileName = checkName(fileName);
     fileString = instance.vertices_output + instance.normals_output + instance.faces_output;
     instance.delete();
     myObj = loader.parseText(fileString);

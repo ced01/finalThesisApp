@@ -1,8 +1,5 @@
 $(document).ready(function() {
-
-    var container = $("#displayer"),
-        fileInput = document.querySelector('#cadFileSelected');
-
+    var container = $("#displayer");
     container.css("width", $(window).width());
     container.css("height", $(window).height());
     globalCam.camera.aspect = container.width() / container.height();
@@ -11,12 +8,12 @@ $(document).ready(function() {
     globalCam.camPosY = $("#currentCamPosY");
     globalCam.camPosZ = $("#currentCamPosZ");
 
-    var newSelectedmesh = null;
-
     $("#meshSize").on('change', function() {
         globalThreeOBJs.meshSize = $(this).val();
+
     });
-    fileInput.addEventListener('change', function() {
+
+    document.querySelector('#cadFileSelected').addEventListener('change', function() {
         $("#messageDiv").html("File to load -<b>" + $(this).val().split("\\")[2].split(".")[0] + "</b>");
         if (globalThreeOBJs.meshSize >= 3) {
             showLoading();
@@ -27,7 +24,7 @@ $(document).ready(function() {
                     personalLoad(reader, fileName);
                     hideLoading();
                 }, false);
-                reader.readAsText(fileInput.files[0]);
+                reader.readAsText(document.querySelector('#cadFileSelected').files[0]);
             }
         } else {
             $("#messageDiv").html("<b>" + $(this).val().split("\\")[2].split(".")[0] + "</b> - minimum mesh size is <b>3</b>");
@@ -35,21 +32,14 @@ $(document).ready(function() {
     });
 
 
+
+
     var script = document.createElement('script');
 
     script.onload = function() {
-        var stats = new Stats(),
-            i;
-
-        var canvas = stats.dom.children;
-
-        for (i = 0; i < stats.dom.children.length; i++) {
-            canvas[i].style = "margin-top:-34px;border-radius: 6px;position: absolute;right: 0px;cursor: pointer;opacity: 0.9;"
-        }
-
-        stats.dom.style = "border-radius: 6px;cursor: pointer;";
+        var stats = new Stats();
+        stats.dom.style = "border-radius: 6px;cursor: pointer;position:absolute;bottom:10px;right:10px;";
         $("#fps").append(stats.dom);
-
         requestAnimationFrame(function loop() {
             stats.update();
             requestAnimationFrame(loop)
@@ -87,7 +77,6 @@ function render() {
     globalCam.camPosX.html(~~globalCam.camera.position.x);
     globalCam.camPosY.html(~~globalCam.camera.position.y);
     globalCam.camPosZ.html(~~globalCam.camera.position.z);
-
     globalThree.renderer.render(globalThree.scene, globalCam.camera);
 }
 
