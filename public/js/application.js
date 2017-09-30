@@ -62,12 +62,15 @@ $(document).ready(function() {
 
     });
 
-    $("#objButton").on("click", function() {
-        var domElement = $("#objectDiv");
+    $(".dropdown").on("show.bs.dropdown", function() {
+
+        var domElement = $("#dropdownMesh");
+        console.log(domElement.height());
         if (domElement.height() > globalThreeOBJs.domUlObjLenght) {
             domElement.css("height", domElement.height());
             domElement.css("overflow-y", "scroll");
         }
+
     });
     window.addEventListener('resize', onWindowResize, false);
 });

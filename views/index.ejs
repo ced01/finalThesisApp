@@ -4,134 +4,121 @@
 <head>
 
     <link href="../public/css/application.css" type="text/css" rel="stylesheet">
-    <link href="../public/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <!--<link href="../public/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">-->
     <link rel="stylesheet" href="./public/css/pick-a-color-1.2.3.min.css">
+    <link rel="stylesheet" href="../public/font/css/font-awesome.min.css">
     <meta charset="UTF-8">
     <title>CAD files 3D Mesh Viewer</title>
 </head>
 
-<body id="objOnFocus" data-index="0">
-    <div class="container-fluid">
-        <div class="row">
-            <div id="displayer">
-            </div>
-            <div class="menu">
-                <div class="col-md-9">
-                    <div class="navbar navbar-default " role="navigation">
-                        <div class="container">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                                <div class="navbar-brand">Web CAD File Viewer</div>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">CAD Web Viewer</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                      <span class="navbar-toggler-icon"></span>
+                            </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Actions</a>
+                    <div class="dropdown-menu mybtn">
+                        <div class="form-group formAddObj">
+                            <br>
+                            <div class="row">
+                                <div class="subaction col-md-12">
+                                    Add axes to scene
+                                </div>
                             </div>
-                            <div class="collapse navbar-collapse">
-                                <ul class="nav navbar-nav">
-                                    <li>
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Actions <b class="caret"></b></a>
-                                        <ul class="dropdown-menu well ulAction">
-                                            <li>
-                                                <div class="form-group formAddObj">
-                                                    <br>
-                                                    <div class="row">
-                                                        <div class="subaction col-md-12">
-                                                            Add axes to scene
-                                                        </div>
-                                                    </div>
-                                                    <br>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            Axes<span id="axes" class="glyphicon glyphicon-minus-sign pull-right" onclick='addOrRemoveAxes();'></span>
-                                                        </div>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="subaction">
-                                                        Add a personal mesh
-                                                    </div>
-                                                    <br>
-                                                    <div class="form-group">
-                                                        <input id="meshSize" type="number" class="form-control" placeholder="3 (smallest size)">
-                                                    </div>
-                                                    <div>
-                                                        <label class="btn-file btn btn-primary btn-block"> Browse
-                                                            <input id="cadFileSelected" style="display: none;" type="file" multiple>
-                                                        </label>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="row">
-                                                        <div class=" subaction col-md-12">
-                                                            Add basic meshes
-                                                        </div>
-                                                    </div>
-                                                    <br>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            Sphere<span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Sphere");'></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            Cube<span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Cube");'></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            Cylinder<span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Cylinder");'></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            Thorus <span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Thorus");'></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            Thorusknot<span class="glyphicon glyphicon-plus-sign pull-right" onclick='objectLoader("Thorusknot");'></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#" id="objButton" class="dropdown-toggle" data-toggle="dropdown">Meshes <b class="caret"></b></a>
-                                        <ul id="objectDiv" class="dropdown-menu form-group well">
-
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#" id="messageDiv" class="dropdown-toggle"></a>
-                                    </li>
-                                </ul>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Axes<span class="pull-right" onclick='addOrRemoveAxes();'><i id="axes" class="fa fa-times" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="subaction">
+                                Add a personal mesh
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <input id="meshSize" type="number" class="form-control" placeholder="3 (smallest size)">
+                            </div>
+                            <div>
+                                <label class="btn-file btn btn-primary btn-block"> Browse
+                                                                    <input id="cadFileSelected" style="display: none;" type="file" multiple>
+                                                                </label>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class=" subaction col-md-12">
+                                    Add basic meshes
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Sphere<span class="pull-right" onclick='objectLoader("Sphere");'><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Cube<span class="pull-right" onclick='objectLoader("Cube");'><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Cylinder<span class="pull-right" onclick='objectLoader("Cylinder");'><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Thorus <span class="pull-right" onclick='objectLoader("Thorus");'><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Thorusknot<span class="pull-right" onclick='objectLoader("Thorusknot");'><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="panel-group">
-                    <div class="panel panel-info ">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <span id="camera" class="infotitle">Camera</span>
-                                    <span id="currentCamPosX" class="pos"></span>
-                                    <span id="currentCamPosY" class="pos"></span>
-                                    <span id="currentCamPosZ" class="pos"></span>
-                                </div>
-                                <div id="info2" class="col-md-12">
-                                </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a id="objButton" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Meshes</a>
+                    <div id="dropdownMesh" class="dropdown-menu mybtn">
+                        <ul id="objectDiv">
+
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <div class="panel-group">
+                <div class="panel panel-info ">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span id="camera" class="infotitle">Camera</span>
+                                <span id="currentCamPosX" class="pos"></span>
+                                <span id="currentCamPosY" class="pos"></span>
+                                <span id="currentCamPosZ" class="pos"></span>
+                            </div>
+                            <div id="info2" class="col-md-12">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="displayer">
+            </div>
+        </div>
         <span id="fps"></span>
-        <div hidden id="displayControlMesh" data-functionality="settings" data-content='
+    </div>
+    <div hidden id="displayControlMesh" data-functionality="settings" data-content='
             <div class="container-fluid form-group">
                 <div class="row">
                     <div class="col-md-8"> 
@@ -173,8 +160,8 @@
                 <input id="focusOnObject" type="checkbox">
             </div>-->
                    '>
-        </div>
-        <div hidden id="displayControlCamera" data-functionality="Camera positions" data-content='
+    </div>
+    <div hidden id="displayControlCamera" data-functionality="Camera positions" data-content='
                     <div class="row">
                         <div class="col-md-10">
                             <label>Camera</label>
@@ -192,51 +179,53 @@
                         </div>
                     </div>
                    '>
-        </div>
-        <div id="meshModal" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title"></h4>
-                    </div>
-                    <div class="modal-body">
-                        <div id="modalContent">
+    </div>
+    <div id="meshModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent">
 
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <div id="btnValidation" class="btn btn-success">Apply</div>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <div id="btnValidation" class="btn btn-success">Apply</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="camModal" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title"></h4>
-                    </div>
-                    <div class="modal-body">
-                        <div id="cammodalContent">
+    </div>
+    <div id="camModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div id="cammodalContent">
 
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <div id="cambtnValidation" class="btn btn-success">Apply</div>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <div id="cambtnValidation" class="btn btn-success">Apply</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div hidden id="screenLoad"></div>
+    </div>
+    <div hidden id="screenLoad"></div>
+    </div>
 </body>
-
-<script src="./public/js/jquery/jquery-2.1.4.min.js"></script>
-<script src="./public/js/jquery-mousewheel-master/jquery.mousewheel.min.js"></script>
-<script src="./public/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+<!--<script src="./public/js/jquery/jquery-2.1.4.min.js"></script>-->
+<!--<script src="./public/bootstrap/js/bootstrap.min.js"></script>-->
 <script src="./public/js/threeJS/build/three.js"></script>
 <script src="./public/js/threeJS/examples/js/controls/OrbitControls.js"></script>
 <script src="./public/js/threeJS/examples/js/controls/DragControls.js"></script>

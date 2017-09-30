@@ -367,16 +367,16 @@ function addOrRemoveAxes() {
     var domElement = $("#axes");
     if (globalThree.sceneHasAxes) {
         removeAxes();
-        domElement.removeClass("glyphicon-minus-sign");
-        domElement.addClass("glyphicon-plus-sign");
+        domElement.removeClass("fa-times");
+        domElement.addClass("fa-plus");
         globalThree.sceneHasAxes = false;
     } else {
         globalThree.axes = new Array();
         createAxe(new THREE.Vector3(-30, 0, 0), new THREE.Vector3(30, 0, 0), new THREE.MeshBasicMaterial({ color: 0xff1fff }));
         createAxe(new THREE.Vector3(0, -30, 0), new THREE.Vector3(0, 30, 0), new THREE.MeshBasicMaterial({ color: 0x29ff29 }));
         createAxe(new THREE.Vector3(0, 0, -30), new THREE.Vector3(0, 0, 30), new THREE.MeshBasicMaterial({ color: 0xff8b3d }));
-        domElement.removeClass("glyphicon-plus-sign");
-        domElement.addClass("glyphicon-minus-sign");
+        domElement.removeClass("fa-plus");
+        domElement.addClass("fa-times");
         globalThree.sceneHasAxes = true;
     }
 }

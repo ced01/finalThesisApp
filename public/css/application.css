@@ -1,6 +1,8 @@
     .mybtn {
-        width: 200px;
-        height: 40px;
+        width: 300px;
+        max-width: 300px !important;
+        min-width: 100% !important;
+        margin-top: 10px !important;
     }
     
     .ulmybtn {
@@ -24,10 +26,6 @@
     .currentPositions {
         text-align: center;
         color: white;
-    }
-    
-    .menu {
-        margin-top: 1%;
     }
     
     .settings {
@@ -79,21 +77,21 @@
         cursor: pointer;
     }
     
-    .glyphicon {
+    .fa {
         height: 20px;
         width: 20px;
     }
     
-    .glyphicon-minus-sign:hover {
+    .fa-times:hover {
         color: red;
         cursor: pointer;
     }
     
-    .glyphicon:hover {
+    .fa:hover {
         cursor: pointer;
     }
     
-    .glyphicon-plus-sign:hover {
+    .fa-plus:hover {
         color: green;
     }
     
@@ -162,7 +160,7 @@
     }
     
     #objectDiv {
-        width: 250px;
+        width: 100%;
     }
     
     .object {

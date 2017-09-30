@@ -142,7 +142,7 @@ function openModalMeshControl(objFoc) {
             $("#currentMeshPosX").html(newobjPosition[0]);
             $("#currentMeshPosY").html(newobjPosition[1]);
             $("#currentMeshPosZ").html(newobjPosition[2]);
-            if (!object3d.sh || !object3d.gc) {
+            if (!object3d.sh && !object3d.gc) {
                 setObjectColor(newHexCol, rgbColor);
             }
             modal.modal('hide');
