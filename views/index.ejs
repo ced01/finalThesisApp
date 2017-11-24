@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-
-    <link href="../public/css/application.css" type="text/css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../public/css/application.css" type="text/css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <!--<link href="../public/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">-->
     <link rel="stylesheet" href="./public/css/pick-a-color-1.2.3.min.css">
     <link rel="stylesheet" href="../public/font/css/font-awesome.min.css">
-    <meta charset="UTF-8">
+
     <title>CAD files 3D Mesh Viewer</title>
 </head>
 
@@ -185,7 +184,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"></h4>
+                    <h4 class="modal-title">info</h4>
                 </div>
                 <div class="modal-body">
                     <div id="modalContent">
@@ -204,7 +203,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"></h4>
+                    <h4 class="modal-title">info</h4>
                 </div>
                 <div class="modal-body">
                     <div id="cammodalContent">
@@ -218,27 +217,25 @@
             </div>
         </div>
     </div>
-    <div hidden id="screenLoad"></div>
-    </div>
+    <div id="screenLoad" hidden></div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <script src="./public/js/threeJS/build/three.min.js"></script>
+    <script src="./public/js/threeJS/examples/js/controls/OrbitControls.js"></script>
+    <script src="./public/js/threeJS/examples/js/controls/DragControls.js"></script>
+    <script src="./public/js/threeJS/examples/js/loaders/OBJLoader2.js"></script>
+    <script src="./public/js/global.js"></script>
+    <script src="./public/js/tinycolor-0.9.15.min.js"></script>
+    <script src="./public/js/pick-a-color-1.2.3.min.js"></script>
+    <script async src="./public/js/objGenerator.js"></script>
+    <script src="./public/js/application.js"></script>
+    <script src="./public/js/event.js"></script>
+    <script src="./public/js/object.js"></script>
+    <script src="./public/js/modalContolFunctions.js"></script>
+    <script src="./public/js/FileSaver.min.js"></script>
 </body>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-<!--<script src="./public/js/jquery/jquery-2.1.4.min.js"></script>-->
-<!--<script src="./public/bootstrap/js/bootstrap.min.js"></script>-->
-<script src="./public/js/threeJS/build/three.js"></script>
-<script src="./public/js/threeJS/examples/js/controls/OrbitControls.js"></script>
-<script src="./public/js/threeJS/examples/js/controls/DragControls.js"></script>
-<script src="./public/js/threeJS/examples/js/loaders/OBJLoader2.js"></script>
-<script src="./public/js/global.js"></script>
-<script src="./public/js/tinycolor-0.9.15.min.js"></script>
-<script src="./public/js/pick-a-color-1.2.3.min.js"></script>
-<script async src="./public/js/objGenerator.js"></script>
-<script src="./public/js/application.js"></script>
-<script src="./public/js/event.js"></script>
-<script src="./public/js/object.js"></script>
-<script src="./public/js/modalContolFunctions.js"></script>
-<script src="./public/js/FileSaver.min.js"></script>
+
 
 
 </html>
