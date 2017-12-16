@@ -14,7 +14,7 @@ function addDomSingleObjName(indexObj, name) {
 }
 
 function generateHTML(indexObj, name, delimiter, addHtmlForIges) {
-    return delimiter + '<div class="row"><div class="col-md-6"><div id="object-' + indexObj + '" class="object" data-name="' + name + '">' + name + '</div></div><div class="col-md-6"><div id="removeOrAdd-' + indexObj + '" class="glyphicon glyphicon-minus-sign icon pull-right" onclick="hideOrShowObj(' + indexObj + ')"></div><div class="pull-right glyphicon glyphicon-cog icon" onclick="openModalMeshControl(' + indexObj + ');"></div></div></div><br><div class="row icon-bar"><div class="col-md-12"><span class="icon" aria-hidden="true"><img id="addOrRemoveNormal-' + indexObj + '" class="imgIcon" onclick="addOrRemoveNormalFromObj(' + indexObj + ')" src="./public/css/icon/Add_normal.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveWireframe-' + indexObj + '" class="imgIcon" onclick="addOrRemoveWireframe(' + indexObj + ')" src="./public/css/icon/add_Mesh.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveShadding-' + indexObj + '" onclick="addOrRemoveShading(' + indexObj + ')" class="imgIcon" src="./public/css/icon/add_Shadding.png"></span>' + addHtmlForIges + '</div></div>';
+    return delimiter + '<div class="row"><div class="col-md-6"><div id="object-' + indexObj + '" class="object" data-name="' + name + '">' + name + '</div></div><div class="col-md-6"><div id="removeOrAdd-' + indexObj + '" class="icon pull-right" onclick="hideOrShowObj(' + indexObj + ')"><i class="fa fa-minus" aria-hidden="true"></i></div><div class="icon pull-right" onclick="openModalMeshControl(' + indexObj + ');"><i class="fa fa-cog" aria-hidden="true"></i></div></div></div><br><div class="row icon-bar"><div class="col-md-12"><span class="icon" aria-hidden="true"><img id="addOrRemoveNormal-' + indexObj + '" class="imgIcon" onclick="addOrRemoveNormalFromObj(' + indexObj + ')" src="./public/css/icon/Add_normal.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveWireframe-' + indexObj + '" class="imgIcon" onclick="addOrRemoveWireframe(' + indexObj + ')" src="./public/css/icon/add_Mesh.png"></span><span class="icon" aria-hidden="true"><img id="addOrRemoveShadding-' + indexObj + '" onclick="addOrRemoveShading(' + indexObj + ')" class="imgIcon" src="./public/css/icon/add_Shadding.png"></span>' + addHtmlForIges + '</div></div>';
 }
 
 function checkName(name) {
@@ -402,8 +402,7 @@ function hideOrShowObj(indexObj) {
             manageWireframe(indexObj, object3d.wh);
         }
         object3d.hidden = false;
-        domObj.removeClass("glyphicon-plus-sign");
-        domObj.addClass("glyphicon-minus-sign");
+        domObj.html("<i class='fa fa-minus' aria-hidden='true'></i>");
 
     } else {
         globalThree.scene.remove(object3d.obj);
@@ -411,8 +410,7 @@ function hideOrShowObj(indexObj) {
             removeNormalFromObj(indexObj);
         }
         object3d.hidden = true;
-        domObj.removeClass("glyphicon-minus-sign");
-        domObj.addClass("glyphicon-plus-sign");
+        domObj.html("<i class='fa fa-plus' aria-hidden='true'></i>");
     }
 }
 
