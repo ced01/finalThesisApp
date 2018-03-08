@@ -85,7 +85,7 @@ function render() {
 
 function animate() {
     requestAnimationFrame(animate);
-    globalCam.orbitControls.update();
+    //globalCam.orbitControls.update();
     render();
 }
 
